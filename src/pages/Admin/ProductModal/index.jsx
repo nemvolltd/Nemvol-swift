@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ArrowLeft, ChevronRight } from 'lucide-react';
 import StepIndicator from './StepIndicator';
 import StepInfo from './StepInfo';
@@ -177,7 +178,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, product, isLoa
         setIsCategoryModalOpen(false);
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
             <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[75vh]">
                 {/* Header */}
@@ -301,6 +302,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, product, isLoa
                 categoryError={categoryError}
                 onSubmit={handleAddCategorySubmit}
             />
-        </div>
+        </div>,
+        document.body
     );
 }

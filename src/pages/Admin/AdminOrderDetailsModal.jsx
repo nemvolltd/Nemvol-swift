@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X, Calendar, MapPin, CreditCard, Box } from 'lucide-react';
 
 export default function AdminOrderDetailsModal({ isOpen, onClose, order }) {
@@ -11,7 +12,7 @@ export default function AdminOrderDetailsModal({ isOpen, onClose, order }) {
         Cancelled: 'bg-red-50 text-red-700 border-red-100',
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
             <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
                 {/* Header */}
@@ -105,6 +106,7 @@ export default function AdminOrderDetailsModal({ isOpen, onClose, order }) {
                     <span className="text-base font-black text-blue-600">{order.total}</span>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

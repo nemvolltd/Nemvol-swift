@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar/Navbar';
 import BottomBar from './components/BottomBar/BottomBar';
 import CartDrawer from './components/CartDrawer/CartDrawer';
@@ -21,6 +21,7 @@ import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminLogin from './pages/Admin/AdminLogin';
 import { useEcommerce } from './context/EcommerceContext';
 import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 
@@ -35,7 +36,7 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const { isCartOpen, setIsCartOpen, isSearchOpen, setIsSearchOpen, isLoadingProducts } = useEcommerce();
+  const { isCartOpen, setIsCartOpen, isSearchOpen, setIsSearchOpen, isLoadingProducts, isAdminLoggedIn } = useEcommerce();
   const location = useLocation();
 
   if (isLoadingProducts) {
@@ -73,7 +74,17 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route 
+            path="/admin" 
+            element={
+              isAdminLoggedIn ? (
+                <AdminDashboard />
+              ) : (
+                <Navigate to="/admin/login" replace />
+              )
+            } 
+          />
         </Routes>
       </main>
       {!hideNavigation && <Footer />}

@@ -26,6 +26,9 @@ export function EcommerceProvider({ children }) {
         smsAlerts: false
     });
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
+        return localStorage.getItem('isAdminLoggedIn') === 'true';
+    });
 
     // Navigation and UI States (Sync-only)
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -438,6 +441,31 @@ export function EcommerceProvider({ children }) {
         }
     };
 
+    const loginAdmin = async (email, password) => {
+        setLoading(prev => ({ ...prev, auth: true }));
+        setErrors(prev => ({ ...prev, auth: null }));
+        try {
+            await new Promise(resolve => setTimeout(resolve, 800)); // simulated latency
+            if (email === 'admin@nemvol.com' && password === 'admin123') {
+                setIsAdminLoggedIn(true);
+                localStorage.setItem('isAdminLoggedIn', 'true');
+                return true;
+            } else {
+                throw new Error('Invalid Admin Credentials. Try admin@nemvol.com / admin123');
+            }
+        } catch (err) {
+            setErrors(prev => ({ ...prev, auth: err.message }));
+            throw err;
+        } finally {
+            setLoading(prev => ({ ...prev, auth: false }));
+        }
+    };
+
+    const logoutAdmin = () => {
+        setIsAdminLoggedIn(false);
+        localStorage.removeItem('isAdminLoggedIn');
+    };
+
     // --- Order placement ---
     const placeOrder = async () => {
         const selectedItems = cart.filter(item => item.selected);
@@ -601,6 +629,11 @@ export function EcommerceProvider({ children }) {
             isSearchOpen,
             setIsSearchOpen,
             getProductById,
+            
+            // Admin Auth
+            isAdminLoggedIn,
+            loginAdmin,
+            logoutAdmin,
             
             // Admin actions
             createProduct,

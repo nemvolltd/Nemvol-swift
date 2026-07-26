@@ -20,7 +20,8 @@ export default function AdminDashboard() {
         deleteProduct,
         updateOrderStatus,
         isLoadingProducts,
-        isLoadingOrders
+        isLoadingOrders,
+        logoutAdmin
     } = useEcommerce();
 
     const handleBackToStore = () => {
@@ -102,18 +103,38 @@ export default function AdminDashboard() {
                         <ArrowLeft className="w-4 h-4" />
                         Main Storefront
                     </button>
+                    <button
+                        onClick={() => {
+                            logoutAdmin();
+                            navigate('/admin/login');
+                        }}
+                        className="h-11 px-4 rounded-xl flex items-center gap-3 text-xs font-bold text-red-600 hover:bg-red-50/50 hover:text-red-700 uppercase tracking-wider transition-colors"
+                    >
+                        <LogOut className="w-4 h-4" />
+                        Sign Out
+                    </button>
                 </div>
             </aside>
 
             {/* Mobile Top Header (No Tabs) */}
             <div className="md:hidden flex bg-white border-b border-slate-100 sticky top-0 z-30">
-                <div className="flex items-center justify-between w-full px-4 py-4">
+                <div className="flex items-center justify-between w-full px-4 py-3">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-xs">
                             A
                         </div>
-                        <span className="text-sm font-black text-slate-900">Admin Control Panel</span>
+                        <span className="text-sm font-black text-slate-900">Admin Panel</span>
                     </div>
+                    <button
+                        onClick={() => {
+                            logoutAdmin();
+                            navigate('/admin/login');
+                        }}
+                        className="p-2 text-slate-400 hover:text-red-600 transition-colors"
+                        title="Sign Out"
+                    >
+                        <LogOut className="w-4.5 h-4.5" />
+                    </button>
                 </div>
             </div>
 

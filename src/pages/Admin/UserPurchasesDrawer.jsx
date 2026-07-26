@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X, ShoppingBag, Calendar, CreditCard, MapPin } from 'lucide-react';
 
 export default function UserPurchasesDrawer({ isOpen, onClose, user, userOrders }) {
@@ -19,7 +20,7 @@ export default function UserPurchasesDrawer({ isOpen, onClose, user, userOrders 
         }
     };
 
-    return (
+    return createPortal(
         <div className="fixed inset-0 z-[100] overflow-hidden">
             {/* Backdrop */}
             <div 
@@ -141,6 +142,7 @@ export default function UserPurchasesDrawer({ isOpen, onClose, user, userOrders 
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
