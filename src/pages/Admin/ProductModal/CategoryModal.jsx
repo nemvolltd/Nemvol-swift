@@ -12,7 +12,7 @@ export default function CategoryModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
             <form onSubmit={onSubmit} className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl p-5 flex flex-col gap-4 animate-scaleIn">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                     <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
