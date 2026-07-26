@@ -22,6 +22,7 @@ import Signup from './pages/Auth/Signup';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import { useEcommerce } from './context/EcommerceContext';
+import LoadingScreen from './components/LoadingScreen/LoadingScreen';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,8 +35,12 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const { isCartOpen, setIsCartOpen, isSearchOpen, setIsSearchOpen } = useEcommerce();
+  const { isCartOpen, setIsCartOpen, isSearchOpen, setIsSearchOpen, isLoadingProducts } = useEcommerce();
   const location = useLocation();
+
+  if (isLoadingProducts) {
+    return <LoadingScreen />;
+  }
 
   // Check if current path is a page that should hide the global navigation
   const hideNavigation = location.pathname.startsWith('/product/') ||
