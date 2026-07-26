@@ -26,7 +26,7 @@ export default function ForgotPassword() {
             {/* Left Column: Premium Brand Photography (Desktop only) */}
             <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 overflow-hidden items-end p-12">
                 <img
-                    src="/herobanner.jpeg"
+                    src={`${import.meta.env.BASE_URL}herobanner.jpeg`}
                     alt="Nemvol Fashion Gallery"
                     className="absolute inset-0 w-full h-full object-cover opacity-85 transition-transform duration-[10s] hover:scale-105"
                 />
@@ -35,7 +35,7 @@ export default function ForgotPassword() {
 
                 {/* Brand Overlay Text */}
                 <div className="relative z-20 bg-white/10 backdrop-blur-md border border-white/10 p-8 rounded-2xl max-w-lg text-white">
-                    <img src="/image.svg" alt="Nemvol Logo" className="w-12 h-12 mb-4 object-contain brightness-0 invert" />
+                    <img src={`${import.meta.env.BASE_URL}image.svg`} alt="Nemvol Logo" className="w-12 h-12 mb-4 object-contain brightness-0 invert" />
                     <h2 className="text-2xl font-black tracking-wider uppercase mb-2">Style Restored</h2>
                     <p className="text-sm font-medium text-white/80 leading-relaxed">
                         Recover access to your Nemvol account and return to your boutique shopping experience.

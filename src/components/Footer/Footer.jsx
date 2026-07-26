@@ -27,7 +27,7 @@ export default function Footer() {
                     <div className="flex flex-col gap-4">
                         <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
                             <img 
-                                src="/image.svg" 
+                                src={`${import.meta.env.BASE_URL}image.svg`} 
                                 alt="Nemvol Logo" 
                                 className="w-7 h-7 object-contain" 
                             />

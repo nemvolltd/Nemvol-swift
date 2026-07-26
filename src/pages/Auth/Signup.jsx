@@ -48,7 +48,7 @@ export default function Signup() {
             {/* Left Column: Premium Brand Photography (Desktop only) */}
             <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 overflow-hidden items-end p-16">
                 <img
-                    src="/hero2.webp"
+                    src={`${import.meta.env.BASE_URL}hero2.webp`}
                     alt="Nemvol Women Collection"
                     className="absolute inset-0 w-full h-full object-cover opacity-80 transition-transform duration-[10.5s] hover:scale-105"
                 />
@@ -57,7 +57,7 @@ export default function Signup() {
 
                 {/* Brand Overlay Text */}
                 <div className="relative z-20 bg-white/10 backdrop-blur-md border border-white/10 p-8 rounded-2xl max-w-md text-white">
-                    <img src="/image.svg" alt="Nemvol Logo" className="w-10 h-10 mb-4 object-contain brightness-0 invert" />
+                    <img src={`${import.meta.env.BASE_URL}image.svg`} alt="Nemvol Logo" className="w-10 h-10 mb-4 object-contain brightness-0 invert" />
                     <h2 className="text-2xl font-black tracking-wider uppercase mb-2">Join Nemvol</h2>
                     <p className="text-xs font-semibold text-white/80 leading-relaxed">
                         Become a member to receive exclusive drops, curated lookbooks, and early access sales.
@@ -72,7 +72,7 @@ export default function Signup() {
                     {/* Header */}
                     <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                         <Link to="/" className="mb-6 hover:opacity-90 transition-opacity">
-                            <img src="/image.svg" alt="Nemvol Logo" className="w-8 h-8 object-contain" />
+                            <img src={`${import.meta.env.BASE_URL}image.svg`} alt="Nemvol Logo" className="w-8 h-8 object-contain" />
                         </Link>
                         <h1 className="text-3xl font-black text-slate-950 tracking-tight">Create an account</h1>
                         <p className="text-xs text-slate-400 font-bold mt-1.5 uppercase tracking-wider">

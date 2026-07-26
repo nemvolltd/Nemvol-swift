@@ -7,7 +7,7 @@ export default function MobileNavbar({ cartCount, onCartClick, onSearchClick }) 
         <div className="md:hidden flex items-center justify-between h-16 w-full px-1 bg-transparent">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
-                <img src="/image.svg" alt="Nemvol Logo" className="w-8 h-8 object-contain" />
+                <img src={`${import.meta.env.BASE_URL}image.svg`} alt="Nemvol Logo" className="w-8 h-8 object-contain" />
             </Link>
 
             {/* Actions */}

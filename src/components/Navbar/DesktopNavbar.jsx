@@ -8,7 +8,7 @@ export default function DesktopNavbar({ navItems, activeItem, cartCount, onCartC
             {/* Left Section: Logo & Brand Name */}
             <div className="flex items-center select-none">
                 <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity duration-300">
-                    <img src="/image.svg" alt="Nemvol Logo" className="w-8 h-8 object-contain" />
+                    <img src={`${import.meta.env.BASE_URL}image.svg`} alt="Nemvol Logo" className="w-8 h-8 object-contain" />
                     <span className="text-base font-black tracking-widest text-slate-900">NEMVOL</span>
                 </Link>
             </div>
