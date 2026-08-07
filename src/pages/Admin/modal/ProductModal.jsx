@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowLeft, Image as ImageIcon, ChevronRight, Plus, Trash2, X } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon, ChevronRight, Plus, Trash2, X, Sparkles } from 'lucide-react';
 import mockDb from '../mockDb';
+import AIProductModal from './AIProductModal';
 
 // Pre-seeded library of product images for the Content Library tab
 const MOCK_LIBRARY_IMAGES = [
@@ -30,6 +31,7 @@ export default function ProductModal({ isOpen, onClose, onSubmit, product, isLoa
     const [images, setImages] = useState([]);
     const [image, setImage] = useState('');
     const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
     const [realCategories, setRealCategories] = useState([]);
     
@@ -152,6 +154,17 @@ export default function ProductModal({ isOpen, onClose, onSubmit, product, isLoa
         onSubmit(formData);
     };
 
+    // Populate all form fields from AI generation output
+    const handleAIApply = (data) => {
+        if (data.name) setName(data.name);
+        if (data.description) setDescription(data.description);
+        if (data.category) setCategory(data.category);
+        if (data.price) setPrice(data.price);
+        if (data.originalPrice) setOriginalPrice(data.originalPrice);
+        if (data.stock) setStock(data.stock);
+        if (data.sizes && data.sizes.length > 0) setSizes(data.sizes);
+    };
+
     return createPortal(
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
             
@@ -170,14 +183,22 @@ export default function ProductModal({ isOpen, onClose, onSubmit, product, isLoa
                     <button
                         type="button"
                         onClick={onClose}
-                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-50 text-slate-700 transition-colors border-none"
+                        className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-50 text-slate-700 transition-colors border-none cursor-pointer"
                     >
                         <ArrowLeft className="w-5 h-5" />
                     </button>
                     <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider text-center">
                         {product ? 'Edit Product' : 'Create Product'}
                     </h3>
-                    <div className="w-9" />
+                    {/* AI Assist Button */}
+                    <button
+                        type="button"
+                        onClick={() => setIsAIModalOpen(true)}
+                        title="Generate with AI"
+                        className="w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-600 text-white shadow-sm hover:shadow-violet-300 transition-all border-none cursor-pointer shrink-0"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                    </button>
                 </div>
 
                 {/* Scrollable Form */}
@@ -449,6 +470,13 @@ export default function ProductModal({ isOpen, onClose, onSubmit, product, isLoa
                 onClose={() => setIsMediaModalOpen(false)}
                 onSave={handleSaveMedia}
                 initialSelected={images}
+            />
+
+            {/* AI Product Generator Modal */}
+            <AIProductModal
+                isOpen={isAIModalOpen}
+                onClose={() => setIsAIModalOpen(false)}
+                onApply={handleAIApply}
             />
         </div>,
         document.body
