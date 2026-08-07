@@ -29,12 +29,12 @@ export default function DeliveryMethodSelector({ selectedMethod, onSelectMethod 
                             key={method.id}
                             onClick={() => onSelectMethod(method.id)}
                             className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${isSelected
-                                    ? 'border-blue-300 bg-blue-50/30'
+                                    ? 'border-orange-300 bg-orange-50/30'
                                     : 'border-slate-100 hover:border-slate-200'
                                 }`}
                         >
                             <div className="flex items-center gap-3">
-                                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${isSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-200 bg-slate-50'
+                                <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${isSelected ? 'bg-orange-500 border-orange-500' : 'border-slate-200 bg-slate-50'
                                     }`}>
                                     {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
                                 </div>

@@ -44,6 +44,13 @@ const useStore = create(
             isSearchOpen: false,
             setIsSearchOpen: (isOpen) => set({ isSearchOpen: isOpen }),
 
+            // ── Modal/Overlay registration (not persisted) ──
+            // Any modal/drawer increments this on open and decrements on close.
+            // BottomBar hides itself whenever this is > 0.
+            openModalsCount: 0,
+            pushModal: () => set((s) => ({ openModalsCount: s.openModalsCount + 1 })),
+            popModal:  () => set((s) => ({ openModalsCount: Math.max(0, s.openModalsCount - 1) })),
+
             // ── Checkout State ──
             deliveryMethod: 'express', // 'standard' | 'express'
             setDeliveryMethod: (method) => set({ deliveryMethod: method }),

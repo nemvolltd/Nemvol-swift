@@ -1,8 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Search, ShoppingBag, User } from 'lucide-react';
 
 export default function MobileNavbar({ cartCount, onCartClick, onSearchClick }) {
+    const location = useLocation();
+
+    // On the home page, HomeTopBar handles the top controls — hide this navbar
+    if (location.pathname === '/') return null;
+
     return (
         <div className="md:hidden flex items-center justify-between h-16 w-full px-1 bg-transparent">
             {/* Logo */}
@@ -48,4 +53,3 @@ export default function MobileNavbar({ cartCount, onCartClick, onSearchClick }) 
         </div>
     );
 }
-

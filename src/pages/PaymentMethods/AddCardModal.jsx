@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { X, CreditCard } from 'lucide-react';
+import { useModalState } from '../../hooks/useModalState';
 
 export default function AddCardModal({ isOpen, onClose, onAdd }) {
+    useModalState(isOpen);
     const [number, setNumber] = useState('');
     const [holder, setHolder] = useState('');
     const [expiry, setExpiry] = useState('');

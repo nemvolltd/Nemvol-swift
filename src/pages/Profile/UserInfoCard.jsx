@@ -11,7 +11,7 @@ export default function UserInfoCard({ name, email }) {
                 <h2 className="text-lg font-bold text-slate-900">{name}</h2>
                 <p className="text-sm text-slate-500">{email}</p>
             </div>
-            <button className="ml-auto text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
+            <button className="ml-auto text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors">
                 Edit
             </button>
         </div>

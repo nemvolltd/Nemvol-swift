@@ -1,59 +1,85 @@
 import React from 'react';
-import { Home, Briefcase, MapPin, Edit2, Trash2 } from 'lucide-react';
+import { Home, Briefcase, MapPin, Edit2, Trash2, CheckCircle2, Phone } from 'lucide-react';
 
 export default function AddressCard({ address, onSetDefault, onEdit, onDelete }) {
-    const isHome = address.name.toLowerCase() === 'home';
-    const isOffice = address.name.toLowerCase() === 'office';
+    const label = address.name?.toLowerCase();
+    const isHome = label === 'home';
+    const isOffice = label === 'office';
+
+    const IconComponent = isHome ? Home : isOffice ? Briefcase : MapPin;
+    const iconBg = address.isDefault
+        ? 'bg-orange-50'
+        : isHome ? 'bg-blue-50' : isOffice ? 'bg-purple-50' : 'bg-slate-50';
+    const iconColor = address.isDefault
+        ? 'text-orange-500'
+        : isHome ? 'text-blue-500' : isOffice ? 'text-purple-500' : 'text-slate-500';
 
     return (
-        <div 
-            className={`bg-white rounded-2xl p-5 shadow-sm border transition-all ${address.isDefault ? 'border-blue-600' : 'border-slate-100 hover:border-slate-200'
-                }`}
-        >
-            <div className="flex items-center justify-between mb-4">
+        <div className={`bg-white rounded-2xl border transition-all shadow-[0_2px_8px_rgba(0,0,0,0.03)] overflow-hidden ${
+            address.isDefault
+                ? 'border-orange-200 ring-1 ring-orange-200/60'
+                : 'border-slate-100 hover:border-slate-200'
+        }`}>
+            {/* Card Header */}
+            <div className={`flex items-center justify-between px-5 py-3.5 ${
+                address.isDefault ? 'bg-orange-50/40 border-b border-orange-100/60' : 'border-b border-slate-50'
+            }`}>
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600">
-                        {isHome ? <Home className="w-5 h-5" /> : isOffice ? <Briefcase className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
+                    <div className={`w-9 h-9 rounded-xl ${iconBg} flex items-center justify-center`}>
+                        <IconComponent className={`w-4 h-4 ${iconColor}`} />
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm font-bold text-slate-900">{address.name}</span>
+                        <span className="text-xs font-black text-slate-900">{address.name}</span>
                         {address.isDefault && (
-                            <span className="text-[9px] text-blue-600 font-bold uppercase tracking-wider">Default Address</span>
+                            <div className="flex items-center gap-1 mt-0.5">
+                                <CheckCircle2 className="w-3 h-3 text-orange-500" />
+                                <span className="text-[9px] font-black text-orange-500 uppercase tracking-wider">Default</span>
+                            </div>
                         )}
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                {/* Actions */}
+                <div className="flex items-center gap-1">
                     <button
                         onClick={onEdit}
-                        className="text-slate-400 hover:text-slate-900 transition-colors"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer border-none bg-transparent"
                         aria-label="Edit address"
                     >
-                        <Edit2 className="w-4 h-4" />
+                        <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                         onClick={onDelete}
-                        className="text-slate-400 hover:text-red-500 transition-colors"
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer border-none bg-transparent"
                         aria-label="Delete address"
                     >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-3.5 h-3.5" />
                     </button>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-1 mb-4">
-                <p className="text-sm font-bold text-slate-800 leading-relaxed">{address.street}</p>
-                <p className="text-xs text-slate-500 font-semibold">{address.city}, {address.state}, {address.country}</p>
-                <p className="text-xs text-slate-400 font-medium mt-1">Phone: {address.phone}</p>
+            {/* Address Body */}
+            <div className="px-5 py-4 flex flex-col gap-1.5">
+                <p className="text-xs font-bold text-slate-800 leading-relaxed">{address.street}</p>
+                <p className="text-[11px] text-slate-500 font-semibold">{address.city}, {address.state}, {address.country}</p>
+                {address.phone && (
+                    <div className="flex items-center gap-1.5 mt-1">
+                        <Phone className="w-3 h-3 text-slate-400" />
+                        <span className="text-[10px] text-slate-400 font-bold">{address.phone}</span>
+                    </div>
+                )}
             </div>
 
+            {/* Set Default CTA */}
             {!address.isDefault && (
-                <button
-                    onClick={onSetDefault}
-                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-100 transition-colors"
-                >
-                    Set as Default
-                </button>
+                <div className="px-5 pb-4">
+                    <button
+                        onClick={onSetDefault}
+                        className="w-full py-2.5 rounded-xl border border-orange-200 text-orange-500 hover:bg-orange-50 text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer bg-transparent"
+                    >
+                        Set as Default
+                    </button>
+                </div>
             )}
         </div>
     );

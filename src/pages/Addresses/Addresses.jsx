@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, MapPin } from 'lucide-react';
 import { useAddresses, useAddAddress, useUpdateAddress, useDeleteAddress, useSetDefaultAddress } from '../../hooks/useAddresses';
 import AddressCard from './AddressCard';
 import AddAddressModal from './AddAddressModal';
@@ -8,10 +8,16 @@ import AddAddressModal from './AddAddressModal';
 const AddressesSkeleton = () => (
     <div className="flex flex-col gap-4 animate-pulse">
         {[1, 2].map((i) => (
-            <div key={i} className="bg-slate-50 border border-slate-100 rounded-2xl p-5 flex flex-col gap-3">
-                <div className="h-4 bg-slate-200 rounded w-1/4"></div>
-                <div className="h-5 bg-slate-200 rounded w-3/4"></div>
-                <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+            <div key={i} className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-slate-50 flex items-center gap-3">
+                    <div className="w-9 h-9 bg-slate-100 rounded-xl" />
+                    <div className="h-3.5 bg-slate-100 rounded w-16" />
+                </div>
+                <div className="px-5 py-4 flex flex-col gap-2">
+                    <div className="h-3.5 bg-slate-100 rounded w-3/4" />
+                    <div className="h-3 bg-slate-100 rounded w-1/2" />
+                    <div className="h-3 bg-slate-100 rounded w-1/3 mt-1" />
+                </div>
             </div>
         ))}
     </div>
@@ -40,7 +46,7 @@ export default function Addresses() {
 
     const handleSaveAddress = (addressData) => {
         if (editingAddress) {
-            updateAddress({ addressId: editingAddress.id, addressData: addressData });
+            updateAddress({ addressId: editingAddress.id, addressData });
         } else {
             addAddress(addressData);
         }
@@ -48,38 +54,45 @@ export default function Addresses() {
     };
 
     return (
-        <div className="w-full max-w-2xl mx-auto px-4 py-6 md:py-10">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-colors border border-slate-100"
-                        aria-label="Go back"
-                    >
-                        <ArrowLeft className="w-5 h-5 text-slate-900" />
-                    </button>
-                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900">My Addresses</h1>
+        <div className="w-full max-w-md mx-auto px-5 py-6 animate-pageSlideUp min-h-screen pb-16 bg-slate-50/50">
+
+            {/* Topbar */}
+            <div className="flex items-center justify-between mb-6">
+                <button
+                    onClick={() => navigate(-1)}
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-white shadow-sm border border-slate-100 hover:bg-slate-50 transition-colors shrink-0 cursor-pointer border-none"
+                    aria-label="Go back"
+                >
+                    <ArrowLeft className="w-4 h-4 text-slate-800" strokeWidth={2.2} />
+                </button>
+
+                <div className="flex flex-col items-center">
+                    <h1 className="text-base font-bold text-slate-900">My Addresses</h1>
+                    {!isLoadingAddresses && (
+                        <span className="text-[10px] text-slate-400 font-bold">
+                            {addresses.length} saved address{addresses.length !== 1 ? 'es' : ''}
+                        </span>
+                    )}
                 </div>
 
                 <button
                     onClick={handleAddNewClick}
-                    className="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-md shadow-blue-600/10 transition-colors"
+                    className="w-10 h-10 bg-orange-500 hover:bg-orange-600 text-white rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(249,115,22,0.30)] transition-all active:scale-95 cursor-pointer border-none"
                     aria-label="Add new address"
                 >
-                    <Plus className="w-5 h-5" />
+                    <Plus className="w-4 h-4" />
                 </button>
             </div>
 
-            {/* List */}
+            {/* Address List */}
             {isLoadingAddresses ? (
                 <AddressesSkeleton />
             ) : error ? (
-                <div className="text-center py-10 bg-red-50/50 rounded-2xl border border-red-100/50">
-                    <p className="text-red-600 text-sm font-bold">{error.message}</p>
+                <div className="text-center py-10 bg-rose-50 rounded-2xl border border-rose-100">
+                    <p className="text-rose-600 text-xs font-bold">{error.message}</p>
                 </div>
             ) : addresses.length > 0 ? (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                     {addresses.map((address) => (
                         <AddressCard
                             key={address.id}
@@ -91,12 +104,26 @@ export default function Addresses() {
                     ))}
                 </div>
             ) : (
-                <div className="text-center py-20 text-slate-400 text-sm">
-                    No shipping addresses found. Click the plus button to add one.
+                /* Empty State */
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+                        <MapPin className="w-7 h-7 text-slate-350" />
+                    </div>
+                    <h3 className="text-sm font-black text-slate-800 mb-1">No addresses yet</h3>
+                    <p className="text-[11px] text-slate-400 max-w-[200px] leading-relaxed mb-6">
+                        Add a delivery address to make checkout faster and easier.
+                    </p>
+                    <button
+                        onClick={handleAddNewClick}
+                        className="flex items-center gap-2 h-11 px-6 bg-orange-500 hover:bg-orange-600 text-white text-xs font-black rounded-full transition-all shadow-[0_4px_16px_rgba(249,115,22,0.30)] cursor-pointer border-none"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add First Address
+                    </button>
                 </div>
             )}
 
-            {/* Add / Edit Modal */}
+            {/* Modal */}
             <AddAddressModal
                 isOpen={isModalOpen}
                 address={editingAddress}

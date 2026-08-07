@@ -8,6 +8,7 @@ import {
     ArrowLeft,
     LogOut,
     FolderTree,
+    User,
 } from 'lucide-react';
 import { useAdminLogout } from '../../../hooks/useAuth';
 
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
     { path: '/admin/categories',  label: 'Categories',  icon: FolderTree },
     { path: '/admin/orders',      label: 'Orders',      icon: ShoppingCart },
     { path: '/admin/users',       label: 'Customers',   icon: Users },
+    { path: '/admin/profile',     label: 'Profile',     icon: User },
 ];
 
 export default function AdminSidebar() {

@@ -62,6 +62,8 @@ export default function AdminLayout() {
                 return 'Settings';
             case '/admin/notifications':
                 return 'Notifications';
+            case '/admin/profile':
+                return 'Profile';
             default:
                 return 'Admin Studio';
         }
@@ -108,9 +110,13 @@ export default function AdminLayout() {
                         <div className="w-px h-5 bg-slate-200 mx-1 rounded-full" />
 
                         {/* User Avatar Circle */}
-                        <div className="w-9 h-9 rounded-full bg-[#1e293b] text-white flex items-center justify-center text-[10px] font-black tracking-wider shadow-sm">
+                        <button
+                            onClick={() => navigate('/admin/profile')}
+                            className="w-9 h-9 rounded-full bg-[#1e293b] hover:bg-slate-800 text-white flex items-center justify-center text-[10px] font-black tracking-wider shadow-sm cursor-pointer border-none transition-all hover:scale-105 active:scale-95"
+                            title="Admin Profile"
+                        >
                             SA
-                        </div>
+                        </button>
                     </div>
                 </header>
 

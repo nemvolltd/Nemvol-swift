@@ -18,9 +18,11 @@ import Orders from './pages/Orders/Orders';
 import Addresses from './pages/Addresses/Addresses';
 import PaymentMethods from './pages/PaymentMethods/PaymentMethods';
 import Settings from './pages/Settings/Settings';
+import Notifications from './pages/Notifications/Notifications';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import ForgotPassword from './pages/Auth/ForgotPassword';
+import Cart from './pages/Cart';
 
 // Admin layout + auth & pages
 import AdminLayout   from './pages/Admin/layout/AdminLayout';
@@ -33,6 +35,7 @@ import AdminOrders   from './pages/Admin/Orders';
 import AdminUsers    from './pages/Admin/Users';
 import AdminSettings from './pages/Admin/Settings';
 import AdminNotifications from './pages/Admin/Notifications';
+import AdminProfile  from './pages/Admin/Profile';
 
 import useStore from './store/useStore';
 import { useProducts } from './hooks/useProducts';
@@ -80,7 +83,7 @@ export default function App() {
         location.pathname === '/forgot-password';
 
     return (
-        <div className={`min-h-screen bg-white text-slate-900 flex flex-col font-sans ${hideNavigation ? '' : 'pb-16 md:pb-0'}`}>
+        <div className={`min-h-screen bg-white text-slate-900 flex flex-col font-sans ${hideNavigation ? '' : 'pb-24 md:pb-0'}`}>
             <ScrollToTop />
             {!hideNavigation && <Navbar />}
             <main className="flex-1 flex flex-col w-full">
@@ -94,6 +97,7 @@ export default function App() {
                     <Route path="/forgot-password" element={<ForgotPassword />} />
 
                     <Route path="/wishlist" element={<Wishlist />} />
+                    <Route path="/cart" element={<Cart />} />
 
                     {/* Protected User Routes */}
                     <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
@@ -104,6 +108,7 @@ export default function App() {
                     <Route path="/addresses" element={<ProtectedRoute><Addresses /></ProtectedRoute>} />
                     <Route path="/payment-methods" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />
                     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                    <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
                     {/* Dedicated Admin Auth Routes */}
                     <Route path="/admin/login" element={<AdminLogin />} />
@@ -126,6 +131,7 @@ export default function App() {
                         <Route path="users"       element={<AdminUsers />} />
                         <Route path="settings"    element={<AdminSettings />} />
                         <Route path="notifications" element={<AdminNotifications />} />
+                        <Route path="profile"      element={<AdminProfile />} />
                     </Route>
                 </Routes>
             </main>

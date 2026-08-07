@@ -38,7 +38,7 @@ export default function Checkout() {
                     <h1 className="text-base font-bold text-slate-900">Checkout</h1>
                     {/* Progress Indicator */}
                     <div className="flex items-center gap-1.5 mt-1">
-                        <div className="w-4 h-1 bg-blue-600 rounded-full"></div>
+                        <div className="w-4 h-1 bg-orange-500 rounded-full"></div>
                         <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ export default function Checkout() {
                     <div className="hidden md:block mt-4">
                         <button
                             onClick={() => setIsPaymentDrawerOpen(true)}
-                            className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-blue-600/10"
+                            className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-orange-500/10"
                         >
                             Continue to Payment method
                         </button>
@@ -81,7 +81,7 @@ export default function Checkout() {
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-slate-50 md:hidden z-20 border-t border-slate-100">
                 <button
                     onClick={() => setIsPaymentDrawerOpen(true)}
-                    className="w-full max-w-3xl mx-auto h-14 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-blue-600/10"
+                    className="w-full max-w-3xl mx-auto h-14 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-orange-500/10"
                 >
                     Continue to Payment method
                 </button>

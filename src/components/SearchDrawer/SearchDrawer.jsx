@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, X, ChevronRight, TrendingUp } from 'lucide-react';
 import { useProducts } from '../../hooks/useProducts';
+import { useModalState } from '../../hooks/useModalState';
 
 export default function SearchDrawer({ isOpen, onClose }) {
+    useModalState(isOpen);
     const navigate = useNavigate();
     const { data: products = [] } = useProducts();
     const [query, setQuery] = useState('');
@@ -69,8 +71,8 @@ export default function SearchDrawer({ isOpen, onClose }) {
                         <ArrowLeft className="w-5 h-5 text-slate-900" />
                     </button>
 
-                    <div className="flex-1 flex items-center h-11 px-3.5 bg-slate-50 border border-slate-200/80 rounded-xl focus-within:border-blue-600 focus-within:bg-white transition-all group">
-                        <Search className="w-4 h-4 text-slate-400 mr-2.5 group-focus-within:text-blue-600 transition-colors" />
+                    <div className="flex-1 flex items-center h-11 px-3.5 bg-slate-50 border border-slate-200/80 rounded-xl focus-within:border-orange-500 focus-within:bg-white transition-all group">
+                        <Search className="w-4 h-4 text-slate-400 mr-2.5 group-focus-within:text-orange-500 transition-colors" />
                         <input
                             ref={inputRef}
                             type="text"
@@ -99,7 +101,7 @@ export default function SearchDrawer({ isOpen, onClose }) {
                             {/* Popular tags */}
                             <div className="flex flex-col gap-3">
                                 <span className="flex items-center gap-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                    <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
+                                    <TrendingUp className="w-3.5 h-3.5 text-orange-500" />
                                     Popular Searches
                                 </span>
                                 <div className="flex flex-wrap gap-2">
@@ -107,7 +109,7 @@ export default function SearchDrawer({ isOpen, onClose }) {
                                         <button
                                             key={tag}
                                             onClick={() => handleTagClick(tag)}
-                                            className="px-3 py-1.5 bg-slate-50 border border-slate-100 hover:bg-blue-50 hover:border-blue-100 hover:text-blue-600 rounded-xl text-xs font-bold text-slate-600 transition-all"
+                                            className="px-3 py-1.5 bg-slate-50 border border-slate-100 hover:bg-orange-50 hover:border-orange-100 hover:text-orange-500 rounded-xl text-xs font-bold text-slate-600 transition-all"
                                         >
                                             {tag}
                                         </button>
@@ -135,7 +137,7 @@ export default function SearchDrawer({ isOpen, onClose }) {
                                                 />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                                                <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-orange-500 transition-colors">
                                                     {product.name}
                                                 </h4>
                                                 <span className="text-xs text-slate-400 font-medium">{product.category}</span>
@@ -171,14 +173,14 @@ export default function SearchDrawer({ isOpen, onClose }) {
                                                 />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                                                <h4 className="text-sm font-bold text-slate-900 truncate group-hover:text-orange-500 transition-colors">
                                                     {product.name}
                                                 </h4>
                                                 <span className="text-xs text-slate-400 font-semibold">{product.category}</span>
                                             </div>
                                             <div className="flex items-center gap-1 shrink-0">
                                                 <span className="text-sm font-black text-slate-950">${product.price.toFixed(2)}</span>
-                                                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-600 transition-colors" />
+                                                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
                                             </div>
                                         </button>
                                     ))}

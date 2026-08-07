@@ -16,8 +16,8 @@ export default function Footer() {
 
     return (
         <footer className="hidden md:block w-full bg-white text-slate-500 border-t border-slate-100/80 relative overflow-hidden mt-auto">
-            {/* Halo Glow Effect: Soft radial blue light centered at the top border */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[180px] bg-blue-600/5 rounded-full blur-[80px] pointer-events-none" />
+            {/* Halo Glow Effect: Soft radial orange light centered at the top border */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[180px] bg-orange-500/5 rounded-full blur-[80px] pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-10 pt-16 pb-12 relative z-10">
                 {/* Upper Grid */}
@@ -68,7 +68,7 @@ export default function Footer() {
                         </p>
 
                         {!isSubscribed ? (
-                            <form onSubmit={handleSubscribe} className="flex items-center h-10 border-b border-slate-200 focus-within:border-blue-600 transition-all relative">
+                            <form onSubmit={handleSubscribe} className="flex items-center h-10 border-b border-slate-200 focus-within:border-orange-500 transition-all relative">
                                 <input
                                     type="email"
                                     placeholder="Enter your email"
@@ -79,14 +79,14 @@ export default function Footer() {
                                 />
                                 <button
                                     type="submit"
-                                    className="absolute right-0 bottom-1.5 text-slate-400 hover:text-blue-600 transition-colors"
+                                    className="absolute right-0 bottom-1.5 text-slate-400 hover:text-orange-500 transition-colors"
                                     aria-label="Subscribe"
                                 >
                                     <ArrowRight className="w-4 h-4" />
                                 </button>
                             </form>
                         ) : (
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50/50 border border-blue-100/50 p-2.5 rounded-xl animate-fade-in">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-orange-650 bg-orange-50/50 border border-orange-100/50 p-2.5 rounded-xl animate-fade-in">
                                 <Check className="w-3.5 h-3.5 shrink-0" />
                                 Subscribed successfully.
                             </div>

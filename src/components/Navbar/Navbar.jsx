@@ -25,16 +25,11 @@ export default function Navbar() {
     const activeItem = navItems.find(item => item.href === location.pathname)?.name || 'Home';
 
     return (
-        <header className="w-full sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100/85">
+        <header className="hidden md:block w-full sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100/85">
             <div className="max-w-7xl mx-auto px-6 lg:px-10">
                 <DesktopNavbar
                     navItems={navItems}
                     activeItem={activeItem}
-                    cartCount={cartCount}
-                    onCartClick={() => setIsCartOpen(true)}
-                    onSearchClick={() => setIsSearchOpen(true)}
-                />
-                <MobileNavbar
                     cartCount={cartCount}
                     onCartClick={() => setIsCartOpen(true)}
                     onSearchClick={() => setIsSearchOpen(true)}

@@ -4,10 +4,12 @@ import { ArrowLeft, ShoppingBag, Check } from 'lucide-react';
 import { useCart, useToggleCartSelect, useUpdateCartQty, useRemoveFromCart, useToggleSelectAll } from '../../hooks/useCart';
 import { useAddresses } from '../../hooks/useAddresses';
 import useStore from '../../store/useStore';
+import { useModalState } from '../../hooks/useModalState';
 import AddressSelectorMini from './AddressSelectorMini';
 import CartItemRow from './CartItemRow';
 
 export default function CartDrawer({ isOpen, onClose }) {
+    useModalState(isOpen);
     const navigate = useNavigate();
     const { data: cart = [] } = useCart();
     const { data: addresses = [] } = useAddresses();
@@ -61,7 +63,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                         <ArrowLeft className="w-5 h-5 text-slate-900" />
                     </button>
                     <h2 className="text-base font-bold text-slate-900">Cart</h2>
-                    <div className="relative w-10 h-10 flex items-center justify-center bg-blue-600 rounded-full">
+                    <div className="relative w-10 h-10 flex items-center justify-center bg-orange-500 rounded-full">
                         <ShoppingBag className="w-5 h-5 text-white" strokeWidth={1.5} />
                         <span className="absolute -top-1 -right-1 w-4 h-4 bg-slate-900 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white">
                             {cart.length}
@@ -83,7 +85,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                     <div className="px-6 py-4 flex items-center gap-3">
                         <button
                             onClick={handleSelectAllToggle}
-                            className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${allSelected ? 'bg-blue-600 border-blue-600' : 'border-slate-200 bg-slate-50'
+                            className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${allSelected ? 'bg-orange-500 border-orange-500' : 'border-slate-200 bg-slate-50'
                                 }`}
                             aria-label="Select all items"
                         >
@@ -121,7 +123,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                     <div className="absolute bottom-0 left-0 right-0 p-6 bg-white border-t border-slate-100">
                         <button
                             onClick={handleCheckout}
-                            className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center shadow-lg shadow-blue-600/10"
+                            className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-all flex items-center justify-center shadow-lg shadow-orange-500/10"
                         >
                             Checkout
                         </button>

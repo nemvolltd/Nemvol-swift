@@ -16,7 +16,7 @@ export default function DebitCardForm() {
                 <button
                     type="button"
                     onClick={() => setIsAddModalOpen(true)}
-                    className="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+                    className="text-xs font-bold text-orange-500 hover:text-orange-600 flex items-center gap-1 transition-colors"
                 >
                     <Plus className="w-3.5 h-3.5" />
                     Add Card
@@ -32,14 +32,14 @@ export default function DebitCardForm() {
                                 key={card.id}
                                 onClick={() => setDefaultPaymentCard(card.id)}
                                 className={`flex items-center justify-between p-3.5 border rounded-xl cursor-pointer transition-all ${isSelected
-                                    ? 'border-blue-600 bg-blue-50/20 shadow-sm shadow-blue-600/5'
+                                    ? 'border-orange-500 bg-orange-50/20 shadow-sm shadow-orange-500/5'
                                     : 'border-slate-200 bg-slate-50/40 hover:bg-slate-50'
                                     }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-7 rounded-md bg-slate-100 flex items-center justify-center border border-slate-200/50">
                                         {card.brand === 'Visa' ? (
-                                            <span className="text-[10px] font-black italic tracking-widest text-blue-600">VISA</span>
+                                            <span className="text-[10px] font-black italic tracking-widest text-slate-800">VISA</span>
                                         ) : (
                                             <div className="flex gap-0.5">
                                                 <div className="w-3.5 h-3.5 rounded-full bg-red-500" />
@@ -55,7 +55,7 @@ export default function DebitCardForm() {
                                     </div>
                                 </div>
                                 <div className={`w-5 h-5 rounded-full flex items-center justify-center border transition-all ${isSelected
-                                    ? 'bg-blue-600 border-blue-600'
+                                    ? 'bg-orange-500 border-orange-500'
                                     : 'border-slate-200 bg-white'
                                     }`}>
                                     {isSelected && <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />}

@@ -2,10 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import useStore from '../../store/useStore';
+import { useModalState } from '../../hooks/useModalState';
 import DebitCardForm from './DebitCardForm';
 import PaymentOptionSelector from './PaymentOptionSelector';
 
 export default function PaymentDrawer({ isOpen, onClose }) {
+    useModalState(isOpen);
     const navigate = useNavigate();
     const paymentMethod = useStore((s) => s.paymentMethod);
     const setPaymentMethod = useStore((s) => s.setPaymentMethod);
@@ -65,7 +67,7 @@ export default function PaymentDrawer({ isOpen, onClose }) {
                         <div className="hidden md:block mt-4">
                             <button
                                 onClick={handleReviewDetails}
-                                className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-blue-600/10"
+                                className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-orange-500/10"
                             >
                                 Review Details
                             </button>
@@ -77,7 +79,7 @@ export default function PaymentDrawer({ isOpen, onClose }) {
                 <div className="p-4 bg-slate-50 border-t border-slate-100 pb-safe md:hidden">
                     <button
                         onClick={handleReviewDetails}
-                        className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-blue-600/10"
+                        className="w-full h-14 bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center shadow-lg shadow-orange-500/10"
                     >
                         Review Details
                     </button>
