@@ -35,7 +35,7 @@ export default function OverviewHeader({
         <div className="flex flex-col gap-6">
             {/* ── Scrollable Card Carousel (Swipeable Horizontal Row) ─────── */}
             <div className="w-full flex flex-nowrap gap-4 overflow-x-auto pb-4 pt-1 px-1 scrollbar-none snap-x snap-mandatory">
-                
+
                 {/* 1. Blue Card (Product In Stock Value) */}
                 <div className="snap-start flex-shrink-0 w-[290px] sm:w-[325px] bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-6 shadow-xl relative overflow-hidden text-white flex flex-col justify-between h-[175px] select-none">
                     <div className="absolute top-0 inset-x-0 h-12 bg-gradient-to-b from-white/[0.04] to-transparent pointer-events-none" />

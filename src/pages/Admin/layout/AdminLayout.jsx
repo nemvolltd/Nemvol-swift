@@ -1,18 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LogOut, Settings, Bell } from 'lucide-react';
-import AdminSidebar   from './AdminSidebar';
+import AdminSidebar from './AdminSidebar';
 import AdminMobileNav from './AdminMobileNav';
 import { useAdminLogout } from '../../../hooks/useAuth';
 
 export default function AdminLayout() {
-    const navigate   = useNavigate();
-    const location   = useLocation();
+    const navigate = useNavigate();
+    const location = useLocation();
     const { logout } = useAdminLogout();
 
-    const [hasUnread, setHasUnread] = React.useState(false);
+    const [hasUnread, setHasUnread] = useState(false);
+    const [showHeader, setShowHeader] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
 
-    React.useEffect(() => {
+    // Scroll listener for smart auto-hiding top header
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > 60 && currentScrollY > lastScrollY) {
+                setShowHeader(false);
+            } else {
+                setShowHeader(true);
+            }
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
+
+    useEffect(() => {
         const checkUnread = () => {
             const stored = localStorage.getItem('admin_notifications');
             if (stored) {
@@ -26,11 +44,6 @@ export default function AdminLayout() {
         const interval = setInterval(checkUnread, 1500);
         return () => clearInterval(interval);
     }, [location.pathname]);
-
-    const handleLogout = () => {
-        logout();
-        navigate('/admin/login');
-    };
 
     // Helper to extract page title dynamically
     const getPageTitle = (pathname) => {
@@ -61,13 +74,14 @@ export default function AdminLayout() {
 
             {/* ── Right column: Header + Page Content ── */}
             <div className="flex-1 flex flex-col min-w-0">
-                
-                {/* ── Global Top Header Bar (Cohesive layout header on all devices) ── */}
-                <header className="bg-white border-b border-slate-100 px-6 py-4 sticky top-0 z-30 flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+
+                {/* ── Global Top Header Bar (Smart auto-hide on scroll) ── */}
+                <header className={`bg-white/90 backdrop-blur-md border-b border-slate-100 px-6 py-4 sticky top-0 z-30 flex items-center justify-between shadow-[0_1px_2px_rgba(0,0,0,0.01)] transition-transform duration-300 ${showHeader ? 'translate-y-0' : '-translate-y-full'
+                    }`}>
                     <h1 className="text-lg md:text-xl font-black tracking-tight text-slate-900 animate-fadeIn">
                         {getPageTitle(location.pathname)}
                     </h1>
-                    
+
                     <div className="flex items-center gap-2.5 select-none">
                         {/* Notification Bell Circle with Red Dot */}
                         <button
@@ -81,10 +95,10 @@ export default function AdminLayout() {
                             )}
                         </button>
 
-                         {/* Settings Link */}
+                        {/* Settings Link */}
                         <button
                             onClick={() => navigate('/admin/settings')}
-                            className="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-555 transition-all duration-200 cursor-pointer"
+                            className="w-9 h-9 rounded-full bg-slate-50 hover:bg-slate-100 flex items-center justify-center text-slate-555 transition-all duration-200 cursor-pointer border-none"
                             title="Settings"
                         >
                             <Settings className="w-4 h-4" strokeWidth={1.8} />
@@ -100,16 +114,16 @@ export default function AdminLayout() {
                     </div>
                 </header>
 
-                {/* ── Page content rendered by child route ── */}
-                <main className="flex-1 p-4 pb-28 md:p-8 overflow-y-auto">
+                {/* ── Page content ── */}
+                <main className="flex-1 p-4 pb-28 md:p-8">
                     <div className="max-w-6xl mx-auto w-full">
                         <Outlet />
                     </div>
                 </main>
             </div>
 
-            {/* ── Mobile Bottom Navigation ── */}
-            <AdminMobileNav />
+            {/* ── Mobile Bottom Navigation (Pass showHeader status or handle internally) ── */}
+            <AdminMobileNav isVisible={showHeader} />
         </div>
     );
 }

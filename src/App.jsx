@@ -22,9 +22,10 @@ import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import ForgotPassword from './pages/Auth/ForgotPassword';
 
-// Admin layout + pages
+// Admin layout + auth & pages
 import AdminLayout   from './pages/Admin/layout/AdminLayout';
-import AdminLogin    from './pages/Admin/AdminLogin';
+import AdminLogin    from './pages/Admin/adminAuth/AdminLogin';
+import AdminSignup   from './pages/Admin/adminAuth/AdminSignup';
 import Overview      from './pages/Admin/Overview';
 import AdminProducts from './pages/Admin/Products';
 import AdminCategories from './pages/Admin/Categories';
@@ -84,7 +85,7 @@ export default function App() {
             {!hideNavigation && <Navbar />}
             <main className="flex-1 flex flex-col w-full">
                 <Routes>
-                    {/* Public Routes */}
+                    {/* Public Storefront Routes */}
                     <Route path="/" element={<Home />} />
                     <Route path="/products" element={<Products />} />
                     <Route path="/product/:id" element={<ProductDetails />} />
@@ -94,7 +95,7 @@ export default function App() {
 
                     <Route path="/wishlist" element={<Wishlist />} />
 
-                    {/* Protected Routes (require login) */}
+                    {/* Protected User Routes */}
                     <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                     <Route path="/review" element={<ProtectedRoute><ReviewDetails /></ProtectedRoute>} />
                     <Route path="/success" element={<ProtectedRoute><PurchaseSuccess /></ProtectedRoute>} />
@@ -104,8 +105,11 @@ export default function App() {
                     <Route path="/payment-methods" element={<ProtectedRoute><PaymentMethods /></ProtectedRoute>} />
                     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
-                    {/* Admin Routes */}
+                    {/* Dedicated Admin Auth Routes */}
                     <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/admin/signup" element={<AdminSignup />} />
+
+                    {/* Protected Admin Routes */}
                     <Route
                         path="/admin"
                         element={
@@ -114,7 +118,6 @@ export default function App() {
                                 : <Navigate to="/admin/login" replace />
                         }
                     >
-                        {/* Index → redirect to overview */}
                         <Route index element={<Navigate to="overview" replace />} />
                         <Route path="overview"    element={<Overview />} />
                         <Route path="products"    element={<AdminProducts />} />
@@ -129,10 +132,8 @@ export default function App() {
             {!hideNavigation && <Footer />}
             {!hideNavigation && <BottomBar />}
 
-            {/* Global Cart Drawer */}
+            {/* Global Drawers */}
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-
-            {/* Global Search Drawer */}
             <SearchDrawer isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </div>
     );
