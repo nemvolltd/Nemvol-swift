@@ -1,21 +1,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingBag, Check } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useCart, useToggleCartSelect, useUpdateCartQty, useRemoveFromCart, useToggleSelectAll } from '../../hooks/useCart';
+import { useAddresses } from '../../hooks/useAddresses';
+import useStore from '../../store/useStore';
 import AddressSelectorMini from './AddressSelectorMini';
 import CartItemRow from './CartItemRow';
 
 export default function CartDrawer({ isOpen, onClose }) {
     const navigate = useNavigate();
-    const {
-        cart,
-        addresses,
-        activeAddressId,
-        toggleCartItemSelection,
-        updateCartQuantity,
-        removeFromCart,
-        toggleSelectAll
-    } = useEcommerce();
+    const { data: cart = [] } = useCart();
+    const { data: addresses = [] } = useAddresses();
+    const activeAddressId = useStore((s) => s.activeAddressId);
+    const { mutate: toggleCartItemSelection } = useToggleCartSelect();
+    const { mutate: updateCartQuantity } = useUpdateCartQty();
+    const { mutate: removeFromCart } = useRemoveFromCart();
+    const { mutate: toggleSelectAll } = useToggleSelectAll();
 
     // Find active shipping address
     const activeAddress = addresses.find(a => a.id === activeAddressId) || addresses[0];
@@ -101,9 +101,9 @@ export default function CartDrawer({ isOpen, onClose }) {
                                 <CartItemRow
                                     key={`${item.product.id}-${item.size}-${idx}`}
                                     item={item}
-                                    onToggleSelection={() => toggleCartItemSelection(item.product.id, item.size)}
-                                    onQuantityChange={(delta) => updateCartQuantity(item.product.id, item.size, delta)}
-                                    onRemove={() => removeFromCart(item.product.id, item.size)}
+                                    onToggleSelection={() => toggleCartItemSelection({ productId: item.product.id, size: item.size })}
+                                    onQuantityChange={(delta) => updateCartQuantity({ productId: item.product.id, size: item.size, delta })}
+                                    onRemove={() => removeFromCart({ productId: item.product.id, size: item.size })}
                                 />
                             ))}
                         </div>

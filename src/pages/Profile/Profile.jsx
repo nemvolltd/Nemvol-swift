@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Package, MapPin, CreditCard, Settings, LogOut } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import useStore from '../../store/useStore';
+import { useLogout } from '../../hooks/useAuth';
 import UserInfoCard from './UserInfoCard';
 import ProfileOptionsList from './ProfileOptionsList';
 
 export default function Profile() {
     const navigate = useNavigate();
-    const { contactInfo, isLoggedIn, logoutUser } = useEcommerce();
-
-    useEffect(() => {
-        if (!isLoggedIn) {
-            navigate('/login');
-        }
-    }, [isLoggedIn, navigate]);
+    const user = useStore((s) => s.user);
+    const { mutate: logoutUser } = useLogout();
 
     const profileOptions = [
         { id: 'orders', icon: Package, label: 'My Orders', link: '/orders' },
@@ -22,14 +18,13 @@ export default function Profile() {
         { id: 'settings', icon: Settings, label: 'Settings', link: '/settings' },
     ];
 
-    if (!isLoggedIn) return null;
 
     return (
         <div className="w-full max-w-3xl mx-auto px-4 py-6 md:py-10">
             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8">My Profile</h1>
 
             {/* User Info Card */}
-            <UserInfoCard name={contactInfo.name} email={contactInfo.email} />
+            <UserInfoCard name={user?.name || 'Guest'} email={user?.email || ''} />
 
             {/* Options List */}
             <ProfileOptionsList options={profileOptions} />

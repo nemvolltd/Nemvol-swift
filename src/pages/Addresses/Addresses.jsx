@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useAddresses, useAddAddress, useUpdateAddress, useDeleteAddress, useSetDefaultAddress } from '../../hooks/useAddresses';
 import AddressCard from './AddressCard';
 import AddAddressModal from './AddAddressModal';
 
@@ -19,15 +19,11 @@ const AddressesSkeleton = () => (
 
 export default function Addresses() {
     const navigate = useNavigate();
-    const {
-        addresses,
-        addAddress,
-        updateAddress,
-        deleteAddress,
-        setDefaultAddress,
-        isLoadingAddresses,
-        errors
-    } = useEcommerce();
+    const { data: addresses = [], isLoading: isLoadingAddresses, error } = useAddresses();
+    const { mutate: addAddress } = useAddAddress();
+    const { mutate: updateAddress } = useUpdateAddress();
+    const { mutate: deleteAddress } = useDeleteAddress();
+    const { mutate: setDefaultAddress } = useSetDefaultAddress();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingAddress, setEditingAddress] = useState(null);
@@ -44,7 +40,7 @@ export default function Addresses() {
 
     const handleSaveAddress = (addressData) => {
         if (editingAddress) {
-            updateAddress(editingAddress.id, addressData);
+            updateAddress({ addressId: editingAddress.id, addressData: addressData });
         } else {
             addAddress(addressData);
         }
@@ -78,9 +74,9 @@ export default function Addresses() {
             {/* List */}
             {isLoadingAddresses ? (
                 <AddressesSkeleton />
-            ) : errors.addresses ? (
+            ) : error ? (
                 <div className="text-center py-10 bg-red-50/50 rounded-2xl border border-red-100/50">
-                    <p className="text-red-600 text-sm font-bold">{errors.addresses}</p>
+                    <p className="text-red-600 text-sm font-bold">{error.message}</p>
                 </div>
             ) : addresses.length > 0 ? (
                 <div className="flex flex-col gap-4">

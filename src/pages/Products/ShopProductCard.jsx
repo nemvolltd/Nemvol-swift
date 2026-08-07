@@ -1,11 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useToggleWishlist, useIsWishlisted } from '../../hooks/useWishlist';
+import { useAddToCart } from '../../hooks/useCart';
+import useStore from '../../store/useStore';
 
 export default function ShopProductCard({ product }) {
-    const { toggleWishlist, isProductWishlisted, addToCart, setIsCartOpen } = useEcommerce();
-    const wishlisted = isProductWishlisted(product.id);
+    const { mutate: toggleWishlist } = useToggleWishlist();
+    const wishlisted = useIsWishlisted(product.id);
+    const { mutate: addToCart } = useAddToCart();
+    const setIsCartOpen = useStore((s) => s.setIsCartOpen);
 
     const handleWishlistToggle = (e) => {
         e.preventDefault();
@@ -57,7 +61,7 @@ export default function ShopProductCard({ product }) {
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        addToCart(product, 'M', 1);
+                        addToCart({ product, size: 'M', quantity: 1 });
                         setIsCartOpen(true);
                     }}
                     className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5"

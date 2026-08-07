@@ -26,7 +26,17 @@ export default function CartItemRow({ item, onToggleSelection, onQuantityChange,
             <div className="flex flex-col justify-between py-1 flex-1">
                 <div>
                     <h3 className="text-sm font-bold text-slate-900 mb-1">{product.name}</h3>
-                    <p className="text-xs text-slate-500 mb-1.5">Size: <span className="font-bold text-slate-700">{size}</span></p>
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-slate-500 mb-1.5">
+                        {product.sku && (
+                            <span>SKU: <span className="font-bold text-slate-700">{product.sku}</span></span>
+                        )}
+                        {product.attributes && Object.entries(product.attributes).map(([k, v]) => (
+                            <span key={k} className="capitalize">{k}: <span className="font-bold text-slate-700">{v}</span></span>
+                        ))}
+                        {!product.sku && (!product.attributes || Object.keys(product.attributes).length === 0) && (
+                            <span>Size: <span className="font-bold text-slate-700">{size}</span></span>
+                        )}
+                    </div>
                     <div className="flex items-baseline gap-2 mb-3">
                         <span className="text-sm font-bold text-slate-900">${product.price.toFixed(2)}</span>
                         {product.originalPrice && (

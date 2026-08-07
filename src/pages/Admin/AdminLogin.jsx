@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useAdminLogin } from '../../hooks/useAuth';
+import useStore from '../../store/useStore';
 import { Lock, Mail, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 
 export default function AdminLogin() {
     const navigate = useNavigate();
-    const { loginAdmin, isAdminLoggedIn, isLoadingAuth, errors } = useEcommerce();
+    const { mutateAsync: loginAdmin, isPending: isLoadingAuth } = useAdminLogin();
+    const isAdminLoggedIn = useStore((s) => s.isAdminLoggedIn);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -19,20 +21,26 @@ export default function AdminLogin() {
         }
     }, [isAdminLoggedIn, navigate]);
 
+    const setAdminAuth = useStore((s) => s.setAdminAuth);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMsg('');
 
-        if (!email.trim() || !password.trim()) {
+        const trimmedEmail = email.trim();
+        const trimmedPassword = password.trim();
+
+        if (!trimmedEmail || !trimmedPassword) {
             setErrorMsg('Please fill in both email and password.');
             return;
         }
 
-        try {
-            await loginAdmin(email.trim(), password.trim());
+        // Mock verification
+        if (trimmedEmail === 'admin@nemvol.com' && trimmedPassword === 'admin123') {
+            setAdminAuth(true);
             navigate('/admin');
-        } catch (err) {
-            setErrorMsg(err.message || 'Authentication failed. Please verify credentials.');
+        } else {
+            setErrorMsg('Invalid admin credentials. Please use the autofill preset.');
         }
     };
 
@@ -60,10 +68,10 @@ export default function AdminLogin() {
                 </div>
 
                 {/* Error Banner */}
-                {(errorMsg || errors.auth) && (
+                {errorMsg && (
                     <div className="p-4 bg-red-950/30 border border-red-900/50 text-red-400 text-xs font-bold rounded-2xl flex items-start gap-2.5 animate-fadeIn">
                         <ShieldAlert className="w-4 h-4 shrink-0 mt-0.5" />
-                        <span>{errorMsg || errors.auth}</span>
+                        <span>{errorMsg}</span>
                     </div>
                 )}
 

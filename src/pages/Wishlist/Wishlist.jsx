@@ -1,13 +1,17 @@
 import React from 'react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useProducts } from '../../hooks/useProducts';
+import { useWishlist } from '../../hooks/useWishlist';
 import WishlistGrid from './WishlistGrid';
 import EmptyWishlist from './EmptyWishlist';
 
 export default function Wishlist() {
-    const { products, wishlist } = useEcommerce();
+    const { data: products = [] } = useProducts();
+    const { data: wishlist = [] } = useWishlist();
 
     // Resolve wishlisted products
-    const wishlistedProducts = products.filter(product => wishlist.includes(product.id));
+    const productsArray = Array.isArray(products) ? products : [];
+    const wishlistArray = Array.isArray(wishlist) ? wishlist : [];
+    const wishlistedProducts = productsArray.filter(product => wishlistArray.includes(product.id));
 
     return (
         <div className="w-full max-w-6xl mx-auto px-4 py-6 md:py-10">

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, ArrowRight } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useSignup } from '../../hooks/useAuth';
 
 export default function Signup() {
     const navigate = useNavigate();
-    const { signupUser, isLoadingAuth } = useEcommerce();
+    const { mutateAsync: signupUser, isPending: isLoadingAuth } = useSignup();
 
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -19,7 +20,7 @@ export default function Signup() {
         e.preventDefault();
         setError('');
 
-        if (!name || !email || !password || !confirmPassword) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
             setError('Please fill in all the required fields.');
             return;
         }
@@ -35,7 +36,7 @@ export default function Signup() {
         }
 
         try {
-            await signupUser(name, email, password);
+            await signupUser({ firstName, lastName, email, password });
             navigate('/profile');
         } catch (err) {
             setError(err.message || 'Signup failed. Please try again.');
@@ -88,21 +89,39 @@ export default function Signup() {
                             </div>
                         )}
 
-                        {/* Full Name Input */}
-                        <div className="flex flex-col">
-                            <label className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest mb-2.5">
-                                Full Name
-                            </label>
-                            <div className="flex items-center h-12 px-4 bg-slate-50 border border-slate-100 hover:border-slate-200/80 focus-within:border-blue-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-100/40 rounded-xl transition-all duration-300 group">
-                                <User className="w-4 h-4 text-slate-400 mr-3 group-focus-within:text-blue-600 transition-colors" />
-                                <input
-                                    type="text"
-                                    placeholder="e.g. Lana Johnson"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="flex-1 bg-transparent text-sm text-slate-900 font-semibold focus:outline-none placeholder:text-slate-300"
-                                    required
-                                />
+                        {/* Names Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex flex-col">
+                                <label className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest mb-2.5">
+                                    First Name
+                                </label>
+                                <div className="flex items-center h-12 px-4 bg-slate-50 border border-slate-100 hover:border-slate-200/80 focus-within:border-blue-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-100/40 rounded-xl transition-all duration-300 group">
+                                    <User className="w-4 h-4 text-slate-400 mr-3 group-focus-within:text-blue-600 transition-colors" />
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Lana"
+                                        value={firstName}
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                        className="flex-1 bg-transparent text-sm text-slate-900 font-semibold focus:outline-none placeholder:text-slate-300"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-[10px] font-extrabold text-slate-900 uppercase tracking-widest mb-2.5">
+                                    Last Name
+                                </label>
+                                <div className="flex items-center h-12 px-4 bg-slate-50 border border-slate-100 hover:border-slate-200/80 focus-within:border-blue-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-100/40 rounded-xl transition-all duration-300 group">
+                                    <User className="w-4 h-4 text-slate-400 mr-3 group-focus-within:text-blue-600 transition-colors" />
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Johnson"
+                                        value={lastName}
+                                        onChange={(e) => setLastName(e.target.value)}
+                                        className="flex-1 bg-transparent text-sm text-slate-900 font-semibold focus:outline-none placeholder:text-slate-300"
+                                        required
+                                    />
+                                </div>
                             </div>
                         </div>
 

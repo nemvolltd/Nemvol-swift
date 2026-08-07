@@ -1,22 +1,23 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Headphones } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useCart } from '../../hooks/useCart';
+import { usePlaceOrder } from '../../hooks/useOrders';
+import { useAddresses } from '../../hooks/useAddresses';
+import { usePaymentCards } from '../../hooks/usePaymentCards';
+import useStore from '../../store/useStore';
 import OrderItemsList from './OrderItemsList';
 import CheckoutSummary from './CheckoutSummary';
 
 export default function ReviewDetails() {
     const navigate = useNavigate();
-    const {
-        cart,
-        deliveryMethod,
-        addresses,
-        activeAddressId,
-        paymentMethod,
-        debitCard,
-        placeOrder,
-        isSubmittingCheckout
-    } = useEcommerce();
+    const { data: cart = [] } = useCart();
+    const { data: addresses = [] } = useAddresses();
+    const { data: paymentCards = [] } = usePaymentCards();
+    const { mutateAsync: placeOrder, isPending: isSubmittingCheckout } = usePlaceOrder();
+    const deliveryMethod = useStore((s) => s.deliveryMethod);
+    const paymentMethod = useStore((s) => s.paymentMethod);
+    const activeAddressId = useStore((s) => s.activeAddressId);
 
     // Get selected cart items
     const selectedItems = cart.filter(item => item.selected);
@@ -28,11 +29,14 @@ export default function ReviewDetails() {
         : 'No shipping address set.';
 
     // Payment method string
+    const defaultCard = paymentCards.find(c => c.isDefault);
     const paymentString = paymentMethod === 'pay_on_delivery'
         ? 'Pay on Delivery'
         : paymentMethod === 'split'
             ? 'Split Payment (Stripe)'
-            : `Debit Card (**** ${debitCard.number.slice(-4)})`;
+            : defaultCard
+                ? `Debit Card (**** ${defaultCard.number.slice(-4)})`
+                : 'No payment method selected';
 
     // Totals calculations
     const subtotal = selectedItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -45,10 +49,21 @@ export default function ReviewDetails() {
             alert('Your cart has no selected items to purchase.');
             return;
         }
-        const newOrder = await placeOrder();
-        if (newOrder) {
-            navigate('/success', { state: { order: newOrder } });
-        } else {
+        try {
+            const newOrder = await placeOrder({
+                items: selectedItems,
+                shippingAddress: activeAddress,
+                paymentMethod,
+                deliveryMethod,
+                subtotal,
+                deliveryFee,
+                tax,
+                total,
+            });
+            if (newOrder) {
+                navigate('/success', { state: { order: newOrder } });
+            }
+        } catch (err) {
             alert('Failed to place order.');
         }
     };

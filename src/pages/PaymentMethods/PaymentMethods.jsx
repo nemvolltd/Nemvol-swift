@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trash2, CheckCircle2, CreditCard, Plus } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { usePaymentCards, useAddCard, useDeleteCard, useSetDefaultCard } from '../../hooks/usePaymentCards';
 import AddCardModal from './AddCardModal';
 
 export default function PaymentMethods() {
     const navigate = useNavigate();
-    const { paymentCards, addPaymentCard, deletePaymentCard, setDefaultPaymentCard } = useEcommerce();
+    const { data: paymentCards = [] } = usePaymentCards();
+    const { mutate: addPaymentCard } = useAddCard();
+    const { mutate: deletePaymentCard } = useDeleteCard();
+    const { mutate: setDefaultPaymentCard } = useSetDefaultCard();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (

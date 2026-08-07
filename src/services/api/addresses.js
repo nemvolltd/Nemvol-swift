@@ -1,42 +1,27 @@
-import { db } from './mockData';
-import { delay, LATENCY } from './utils';
+import apiClient from './client';
 
 export const addressesApi = {
     getAddresses: async () => {
-        await delay(LATENCY);
-        return [...db.addresses];
+        const response = await apiClient.get('/addresses');
+        const data = response.data.data || response.data;
+        return data.addresses || data;
     },
 
     addAddress: async (addressObj) => {
-        await delay(LATENCY);
-        const newId = db.addresses.length > 0 ? Math.max(...db.addresses.map(a => a.id)) + 1 : 1;
-        const newAddress = { ...addressObj, id: newId };
-        if (newAddress.isDefault) {
-            db.addresses = db.addresses.map(a => ({ ...a, isDefault: false })).concat(newAddress);
-        } else {
-            db.addresses.push(newAddress);
-        }
-        return [...db.addresses];
+        const response = await apiClient.post('/addresses', addressObj);
+        const data = response.data.data || response.data;
+        return data.addresses || data;
     },
 
     updateAddress: async (addressId, updatedAddress) => {
-        await delay(LATENCY);
-        db.addresses = db.addresses.map(a => {
-            if (a.id === addressId) {
-                const updated = { ...a, ...updatedAddress };
-                return updated;
-            }
-            return a;
-        });
-        if (updatedAddress.isDefault) {
-            db.addresses = db.addresses.map(a => a.id === addressId ? { ...a, isDefault: true } : { ...a, isDefault: false });
-        }
-        return [...db.addresses];
+        const response = await apiClient.put(`/addresses/${addressId}`, updatedAddress);
+        const data = response.data.data || response.data;
+        return data.addresses || data;
     },
 
     deleteAddress: async (addressId) => {
-        await delay(LATENCY);
-        db.addresses = db.addresses.filter(a => a.id !== addressId);
-        return [...db.addresses];
+        const response = await apiClient.delete(`/addresses/${addressId}`);
+        const data = response.data.data || response.data;
+        return data.addresses || data;
     }
 };

@@ -1,25 +1,39 @@
 import React, { useState } from 'react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useProducts } from '../../hooks/useProducts';
+import { useCategories } from '../../hooks/useCategories';
 import HeroBanner from './HeroBanner';
 import CategoryFilter from './CategoryFilter';
 import ProductCard from './ProductCard';
 
 export default function Home() {
-    const { products } = useEcommerce();
+    const { data: products = [] } = useProducts();
+    const { data: realCategories = [] } = useCategories();
     const [activeCategory, setActiveCategory] = useState('All');
 
-    const categories = ['All', 'Dresses', 'Shirts', 'Jeans', 'Blazers', 'Children Wear'];
+    const defaultCategories = ['All', 'Dresses', 'Shirts', 'Jeans', 'Blazers', 'Children Wear'];
+    const categories = realCategories.length > 0 
+        ? ['All', ...realCategories.map(c => c.name)]
+        : defaultCategories;
 
     // Dynamic filtering logic
-    const filteredProducts = products.filter(product => {
+    const productsArray = Array.isArray(products) ? products : [];
+    const filteredProducts = productsArray.filter(product => {
         if (activeCategory === 'All') return true;
+        
+        const productCategory = product.category?.toLowerCase() || '';
+        const selectedCat = activeCategory.toLowerCase();
+        
+        // Exact name or ID match
+        if (productCategory === selectedCat) return true;
+        
+        // Substring matches
+        if (productCategory.includes(selectedCat) || selectedCat.includes(productCategory)) return true;
+        
+        // Substring match on product title (fallback)
         const name = product.name.toLowerCase();
-        if (activeCategory === 'Dresses') return name.includes('dress');
-        if (activeCategory === 'Shirts') return name.includes('shirt') || name.includes('blouse') || name.includes('tee');
-        if (activeCategory === 'Jeans') return name.includes('trouser') || name.includes('pants') || name.includes('jeans');
-        if (activeCategory === 'Blazers') return name.includes('blazer') || name.includes('jacket');
-        if (activeCategory === 'Children Wear') return product.category.toLowerCase() === 'children';
-        return true;
+        if (name.includes(selectedCat)) return true;
+        
+        return false;
     });
 
     // We can show the first 4 for home page "Bestsellers"

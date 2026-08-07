@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Headphones } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import useStore from '../../store/useStore';
+import { useAddresses } from '../../hooks/useAddresses';
+import { useUpdateContactInfo } from '../../hooks/useSettings';
 import ContactInfoForm from './ContactInfoForm';
 import DeliveryAddressSummary from './DeliveryAddressSummary';
 import DeliveryMethodSelector from './DeliveryMethodSelector';
@@ -9,14 +11,12 @@ import PaymentDrawer from '../../components/PaymentDrawer/PaymentDrawer';
 
 export default function Checkout() {
     const navigate = useNavigate();
-    const {
-        contactInfo,
-        updateContactInfo,
-        addresses,
-        activeAddressId,
-        deliveryMethod,
-        updateDeliveryMethod
-    } = useEcommerce();
+    const user = useStore((s) => s.user);
+    const deliveryMethod = useStore((s) => s.deliveryMethod);
+    const setDeliveryMethod = useStore((s) => s.setDeliveryMethod);
+    const activeAddressId = useStore((s) => s.activeAddressId);
+    const { data: addresses = [] } = useAddresses();
+    const { mutate: updateContactInfo } = useUpdateContactInfo();
 
     const [isPaymentDrawerOpen, setIsPaymentDrawerOpen] = useState(false);
 
@@ -51,7 +51,7 @@ export default function Checkout() {
                 {/* Left Column: Contact and Shipping Info */}
                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                     <ContactInfoForm 
-                        contactInfo={contactInfo} 
+                        contactInfo={user || {}} 
                         onInfoChange={updateContactInfo} 
                     />
 
@@ -62,7 +62,7 @@ export default function Checkout() {
                 <div className="w-full md:w-1/2 flex flex-col gap-4">
                     <DeliveryMethodSelector 
                         selectedMethod={deliveryMethod} 
-                        onSelectMethod={updateDeliveryMethod} 
+                        onSelectMethod={setDeliveryMethod} 
                     />
 
                     {/* Desktop Continue Button (Inline) */}

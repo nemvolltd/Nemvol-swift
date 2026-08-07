@@ -1,63 +1,46 @@
-import { db } from './mockData';
-import { delay, LATENCY } from './utils';
+import apiClient from './client';
 
 export const cartApi = {
     getCart: async () => {
-        await delay(LATENCY);
-        return [...db.cart];
+        const response = await apiClient.get('/cart');
+        const data = response.data.data || response.data;
+        return data.cart || data;
     },
 
     addToCart: async (product, size, quantity = 1) => {
-        await delay(LATENCY - 100);
-        const existingIndex = db.cart.findIndex(
-            item => item.product.id === product.id && item.size === size
-        );
-        if (existingIndex > -1) {
-            db.cart[existingIndex].quantity += quantity;
-        } else {
-            db.cart.push({ product, size, quantity, selected: true });
-        }
-        return [...db.cart];
+        const response = await apiClient.post('/cart/items', { product, size, quantity });
+        const data = response.data.data || response.data;
+        return data.cart || data;
     },
 
     removeFromCart: async (productId, size) => {
-        await delay(LATENCY - 200);
-        db.cart = db.cart.filter(item => !(item.product.id === productId && item.size === size));
-        return [...db.cart];
+        // Send fields either as query params or request payload depending on REST standards
+        const response = await apiClient.delete('/cart/items', { data: { productId, size } });
+        const data = response.data.data || response.data;
+        return data.cart || data;
     },
 
     updateCartQuantity: async (productId, size, delta) => {
-        await delay(LATENCY - 300);
-        db.cart = db.cart.map(item => {
-            if (item.product.id === productId && item.size === size) {
-                const newQuantity = Math.max(1, item.quantity + delta);
-                return { ...item, quantity: newQuantity };
-            }
-            return item;
-        });
-        return [...db.cart];
+        const response = await apiClient.patch('/cart/items', { productId, size, delta });
+        const data = response.data.data || response.data;
+        return data.cart || data;
     },
 
     toggleCartItemSelection: async (productId, size) => {
-        await delay(LATENCY - 400);
-        db.cart = db.cart.map(item => {
-            if (item.product.id === productId && item.size === size) {
-                return { ...item, selected: !item.selected };
-            }
-            return item;
-        });
-        return [...db.cart];
+        const response = await apiClient.patch('/cart/items/select', { productId, size });
+        const data = response.data.data || response.data;
+        return data.cart || data;
     },
 
     toggleSelectAll: async (selectAllVal) => {
-        await delay(LATENCY - 400);
-        db.cart = db.cart.map(item => ({ ...item, selected: selectAllVal }));
-        return [...db.cart];
+        const response = await apiClient.patch('/cart/select-all', { selectAllVal });
+        const data = response.data.data || response.data;
+        return data.cart || data;
     },
 
     clearSelectedCartItems: async () => {
-        await delay(LATENCY - 200);
-        db.cart = db.cart.filter(item => !item.selected);
-        return [...db.cart];
+        const response = await apiClient.delete('/cart/selected');
+        const data = response.data.data || response.data;
+        return data.cart || data;
     }
 };

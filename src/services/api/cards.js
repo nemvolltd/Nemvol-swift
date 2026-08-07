@@ -1,41 +1,27 @@
-import { db } from './mockData';
-import { delay, LATENCY } from './utils';
+import apiClient from './client';
 
 export const cardsApi = {
     getCards: async () => {
-        await delay(LATENCY - 200);
-        return [...db.cards];
+        const response = await apiClient.get('/payment-cards');
+        const data = response.data.data || response.data;
+        return data.cards || data;
     },
 
     addCard: async (cardData) => {
-        await delay(LATENCY);
-        const newCard = {
-            id: `card-${Date.now()}`,
-            ...cardData,
-            isDefault: db.cards.length === 0 ? true : cardData.isDefault
-        };
-        if (newCard.isDefault) {
-            db.cards = db.cards.map(c => ({ ...c, isDefault: false }));
-        }
-        db.cards.push(newCard);
-        return [...db.cards];
+        const response = await apiClient.post('/payment-cards', cardData);
+        const data = response.data.data || response.data;
+        return data.cards || data;
     },
 
     deleteCard: async (cardId) => {
-        await delay(LATENCY - 100);
-        db.cards = db.cards.filter(c => c.id !== cardId);
-        if (db.cards.length > 0 && !db.cards.some(c => c.isDefault)) {
-            db.cards[0].isDefault = true;
-        }
-        return [...db.cards];
+        const response = await apiClient.delete(`/payment-cards/${cardId}`);
+        const data = response.data.data || response.data;
+        return data.cards || data;
     },
 
     setDefaultCard: async (cardId) => {
-        await delay(LATENCY - 200);
-        db.cards = db.cards.map(c => ({
-            ...c,
-            isDefault: c.id === cardId
-        }));
-        return [...db.cards];
+        const response = await apiClient.patch(`/payment-cards/${cardId}/default`);
+        const data = response.data.data || response.data;
+        return data.cards || data;
     }
 };

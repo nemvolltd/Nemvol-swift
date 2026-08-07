@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Check, Plus, CreditCard } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { usePaymentCards, useAddCard, useSetDefaultCard } from '../../hooks/usePaymentCards';
 import AddCardModal from '../../pages/PaymentMethods/AddCardModal';
 
 export default function DebitCardForm() {
-    const { paymentCards, addPaymentCard, setDefaultPaymentCard } = useEcommerce();
+    const { data: paymentCards = [] } = usePaymentCards();
+    const { mutate: addPaymentCard } = useAddCard();
+    const { mutate: setDefaultPaymentCard } = useSetDefaultCard();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     return (

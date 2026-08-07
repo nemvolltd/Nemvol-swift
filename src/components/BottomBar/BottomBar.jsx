@@ -16,8 +16,8 @@ export default function BottomBar() {
     const activeItem = navItems.find(item => item.href === location.pathname)?.name || 'Home';
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-100 pb-safe pt-2.5 px-6 z-50 shadow-[0_-8px_30px_rgba(0,0,0,0.04)]">
-            <div className="flex items-center justify-between h-14 max-w-md mx-auto">
+        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm">
+            <div className="bg-white/80 backdrop-blur-xl border border-slate-100 rounded-full px-3 py-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] flex items-center justify-around">
                 {navItems.map((item) => (
                     <BottomBarItem
                         key={item.name}
@@ -31,3 +31,4 @@ export default function BottomBar() {
         </div>
     );
 }
+

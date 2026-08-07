@@ -5,26 +5,22 @@ export default function BottomBarItem({ name, icon: Icon, href, isActive }) {
     return (
         <Link
             to={href}
-            className="flex flex-col items-center justify-center w-16 select-none"
+            className={`flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full transition-all duration-300 select-none ${isActive
+                    ? 'bg-slate-900 text-white shadow-md shadow-slate-950/10'
+                    : 'text-slate-400 hover:text-slate-600 bg-transparent'
+                }`}
         >
-            <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-300 ${isActive
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/25 scale-110 -translate-y-1'
-                : 'text-slate-400 bg-transparent'
-                }`}
-            >
-                <Icon
-                    className="w-[18px] h-[18px] transition-transform duration-300"
-                    strokeWidth={isActive ? 2.2 : 1.5}
-                />
-            </div>
+            <Icon
+                className="w-4.5 h-4.5 transition-transform duration-300"
+                strokeWidth={isActive ? 2.2 : 1.8}
+            />
             <span
-                className={`text-[9px] font-bold tracking-widest mt-1 transition-all duration-300 uppercase ${isActive 
-                    ? 'text-blue-600 scale-105 opacity-100' 
-                    : 'text-slate-400 opacity-90'
-                }`}
+                className={`text-[9px] font-bold tracking-wider uppercase transition-all duration-300 overflow-hidden whitespace-nowrap ${isActive ? 'max-w-16 opacity-100' : 'max-w-0 opacity-0'
+                    }`}
             >
                 {name}
             </span>
         </Link>
     );
 }
+

@@ -6,6 +6,8 @@ import { addressesApi } from './addresses';
 import { cardsApi } from './cards';
 import { settingsApi } from './settings';
 import { ordersApi } from './orders';
+import { categoriesApi } from './categories';
+import { variantsApi } from './variants';
 
 export const api = {
     ...authApi,
@@ -15,6 +17,8 @@ export const api = {
     ...addressesApi,
     ...cardsApi,
     ...settingsApi,
-    ...ordersApi
+    ...ordersApi,
+    ...categoriesApi,
+    ...variantsApi
 };
 export default api;

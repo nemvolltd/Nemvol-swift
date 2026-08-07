@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, X, ChevronRight, TrendingUp } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useProducts } from '../../hooks/useProducts';
 
 export default function SearchDrawer({ isOpen, onClose }) {
     const navigate = useNavigate();
-    const { products } = useEcommerce();
+    const { data: products = [] } = useProducts();
     const [query, setQuery] = useState('');
     const inputRef = useRef(null);
 
@@ -23,14 +23,15 @@ export default function SearchDrawer({ isOpen, onClose }) {
     }, [isOpen]);
 
     // Filtering logic
+    const productsArray = Array.isArray(products) ? products : [];
     const matchingProducts = query.trim() === ''
         ? []
-        : products.filter(product => {
+        : productsArray.filter(product => {
             const term = query.toLowerCase();
             return (
                 product.name.toLowerCase().includes(term) ||
-                product.category.toLowerCase().includes(term) ||
-                product.description.toLowerCase().includes(term)
+                (product.category || '').toLowerCase().includes(term) ||
+                (product.description || '').toLowerCase().includes(term)
             );
         });
 

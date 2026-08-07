@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useOrders } from '../../hooks/useOrders';
 import OrderCard from './OrderCard';
 import OrderDetailsModal from './OrderDetailsModal';
 
@@ -27,7 +27,7 @@ const OrdersSkeleton = () => (
 
 export default function Orders() {
     const navigate = useNavigate();
-    const { orders, isLoadingOrders, errors } = useEcommerce();
+    const { data: orders = [], isLoading: isLoadingOrders, error } = useOrders();
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     return (
@@ -47,9 +47,9 @@ export default function Orders() {
             {/* List */}
             {isLoadingOrders ? (
                 <OrdersSkeleton />
-            ) : errors.orders ? (
+            ) : error ? (
                 <div className="text-center py-10 bg-red-50/50 rounded-2xl border border-red-100/50">
-                    <p className="text-red-600 text-sm font-bold">{errors.orders}</p>
+                    <p className="text-red-600 text-sm font-bold">{error.message}</p>
                 </div>
             ) : orders.length > 0 ? (
                 <div className="flex flex-col gap-6">

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useLogin } from '../../hooks/useAuth';
 
 export default function Login() {
     const navigate = useNavigate();
-    const { loginUser, isLoadingAuth } = useEcommerce();
+    const { mutateAsync: loginUser, isPending: isLoadingAuth } = useLogin();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,8 +22,10 @@ export default function Login() {
         }
 
         try {
-            await loginUser(email, password);
-            navigate('/profile');
+            await loginUser({ email, password });
+            // Redirect to the page they were trying to visit, or profile
+            const params = new URLSearchParams(window.location.search);
+            navigate(params.get('redirect') || '/profile');
         } catch (err) {
             setError(err.message || 'Login failed. Please try again.');
         }

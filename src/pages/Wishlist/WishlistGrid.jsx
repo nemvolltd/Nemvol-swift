@@ -1,10 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, ShoppingBag } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useToggleWishlist } from '../../hooks/useWishlist';
+import { useAddToCart } from '../../hooks/useCart';
+import useStore from '../../store/useStore';
 
 export default function WishlistGrid({ items }) {
-    const { toggleWishlist, addToCart, setIsCartOpen } = useEcommerce();
+    const { mutate: toggleWishlist } = useToggleWishlist();
+    const { mutate: addToCart } = useAddToCart();
+    const setIsCartOpen = useStore((s) => s.setIsCartOpen);
 
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -49,7 +53,7 @@ export default function WishlistGrid({ items }) {
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                addToCart(product, 'M', 1);
+                                addToCart({ product, size: 'M', quantity: 1 });
                                 setIsCartOpen(true);
                             }}
                             className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-1.5"

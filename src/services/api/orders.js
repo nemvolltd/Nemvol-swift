@@ -1,34 +1,21 @@
-import { db } from './mockData';
-import { delay, LATENCY } from './utils';
+import apiClient from './client';
 
 export const ordersApi = {
     getOrders: async () => {
-        await delay(LATENCY);
-        return [...db.orders];
+        const response = await apiClient.get('/orders');
+        const data = response.data.data || response.data;
+        return data.orders || data;
     },
 
     placeOrder: async (orderData) => {
-        await delay(LATENCY + 200);
-        const newOrder = {
-            id: `ORD-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            status: 'Processing',
-            ...orderData
-        };
-        db.orders.unshift(newOrder);
-        // Clear selected cart items on success
-        db.cart = db.cart.filter(item => !item.selected);
-        return newOrder;
+        const response = await apiClient.post('/orders', orderData);
+        const data = response.data.data || response.data;
+        return data.order || data;
     },
 
     updateOrderStatus: async (orderId, status) => {
-        await delay(LATENCY);
-        const index = db.orders.findIndex(o => o.id === orderId);
-        if (index === -1) throw new Error('Order not found');
-        db.orders[index] = {
-            ...db.orders[index],
-            status: status
-        };
-        return [...db.orders];
+        const response = await apiClient.patch(`/admin/orders/${orderId}/status`, { status });
+        const data = response.data.data || response.data;
+        return data.orders || data;
     }
 };

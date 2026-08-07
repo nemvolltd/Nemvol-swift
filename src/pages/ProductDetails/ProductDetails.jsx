@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Heart } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useProduct, useProducts } from '../../hooks/useProducts';
+import { useVariants } from '../../hooks/useVariants';
+import { useAddToCart } from '../../hooks/useCart';
+import { useToggleWishlist, useIsWishlisted } from '../../hooks/useWishlist';
+import useStore from '../../store/useStore';
 import ImageGallery from './ImageGallery';
 import SizeSelector from './SizeSelector';
 import ProductInfo from './ProductInfo';
@@ -35,47 +39,79 @@ const ProductDetailsSkeleton = () => (
 export default function ProductDetails() {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { 
-        products, 
-        addToCart, 
-        toggleWishlist, 
-        isProductWishlisted, 
-        setIsCartOpen,
-        getProductById,
-        isLoadingCart
-    } = useEcommerce();
 
-    const [product, setProduct] = useState(null);
-    const [loadingDetails, setLoadingDetails] = useState(true);
-    const [detailsError, setDetailsError] = useState(null);
+    // TanStack Query hooks
+    const { data: products = [] } = useProducts();
+    const { data: fetchedProduct, isLoading: isLoadingRemote, error: remoteError } = useProduct(id);
+    const { mutate: addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { mutate: toggleWishlist } = useToggleWishlist();
+    const wishlisted = useIsWishlisted(parseInt(id));
+    const setIsCartOpen = useStore((s) => s.setIsCartOpen);
 
     const [selectedSize, setSelectedSize] = useState('M');
     const [quantity, setQuantity] = useState(1);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-    // Fetch product details asynchronously
-    useEffect(() => {
-        const loadProduct = async () => {
-            setLoadingDetails(true);
-            setDetailsError(null);
-            try {
-                // Check local array first for instant lookup
-                const local = products.find(p => p.id === parseInt(id));
-                if (local) {
-                    setProduct(local);
-                } else {
-                    // Fetch remote
-                    const remote = await getProductById(id);
-                    setProduct(remote);
-                }
-            } catch (err) {
-                setDetailsError(err.message || 'Product not found.');
-            } finally {
-                setLoadingDetails(false);
+    // Fetch variants
+    const { data: variants = [] } = useVariants(id);
+
+    // Track chosen variant attributes
+    const [selectedAttributes, setSelectedAttributes] = useState({});
+
+    // Prefer local cache, fall back to remote fetch
+    const productsArray = Array.isArray(products) ? products : [];
+    const localProduct = productsArray.find(p => p.id === parseInt(id));
+    const product = localProduct || fetchedProduct;
+    const isLoading = !localProduct && isLoadingRemote;
+
+    // Find all unique attribute keys across all variants (e.g. ['color', 'size'])
+    const attributeKeys = React.useMemo(() => {
+        const keys = new Set();
+        (variants || []).forEach(v => {
+            if (v.attributes) {
+                Object.keys(v.attributes).forEach(k => keys.add(k));
             }
-        };
-        loadProduct();
-    }, [id, products, getProductById]);
+        });
+        return Array.from(keys);
+    }, [variants]);
+
+    // Group possible values for each attribute key
+    const attributeValues = React.useMemo(() => {
+        const groups = {};
+        attributeKeys.forEach(key => {
+            const vals = new Set();
+            (variants || []).forEach(v => {
+                if (v.attributes && v.attributes[key]) {
+                    vals.add(v.attributes[key]);
+                }
+            });
+            groups[key] = Array.from(vals);
+        });
+        return groups;
+    }, [variants, attributeKeys]);
+
+    // Initialize selection once values are loaded
+    useEffect(() => {
+        if (attributeKeys.length > 0) {
+            const initial = {};
+            attributeKeys.forEach(key => {
+                if (attributeValues[key]?.length > 0) {
+                    initial[key] = attributeValues[key][0];
+                }
+            });
+            setSelectedAttributes(initial);
+        }
+    }, [variants, attributeKeys, attributeValues]);
+
+    // Find the currently selected variant based on chosen attributes
+    const selectedVariant = React.useMemo(() => {
+        if (!variants || variants.length === 0) return null;
+        return variants.find(v => {
+            return attributeKeys.every(key => v.attributes[key] === selectedAttributes[key]);
+        }) || variants[0];
+    }, [variants, selectedAttributes, attributeKeys]);
+
+    const priceToDisplay = selectedVariant ? selectedVariant.price : (product?.price || 0);
 
     // Update size options once product details are available
     useEffect(() => {
@@ -84,14 +120,14 @@ export default function ProductDetails() {
         }
     }, [product]);
 
-    if (loadingDetails) {
+    if (isLoading) {
         return <ProductDetailsSkeleton />;
     }
 
-    if (detailsError || !product) {
+    if (remoteError || !product) {
         return (
             <div className="w-full max-w-6xl mx-auto px-4 py-20 text-center">
-                <h2 className="text-xl font-bold text-slate-900 mb-2">{detailsError || 'Product Not Found'}</h2>
+                <h2 className="text-xl font-bold text-slate-900 mb-2">{remoteError?.message || 'Product Not Found'}</h2>
                 <button onClick={() => navigate('/products')} className="text-blue-600 font-extrabold uppercase tracking-wider text-sm mt-4">
                     Go Back To Shop
                 </button>
@@ -99,11 +135,20 @@ export default function ProductDetails() {
         );
     }
 
-    const wishlisted = isProductWishlisted(product.id);
-
-    const handleAddToCartClick = async () => {
-        await addToCart(product, selectedSize, quantity);
-        setIsCartOpen(true); // Triggers global cart drawer open
+    const handleAddToCartClick = () => {
+        const cartProduct = {
+            ...product,
+            price: priceToDisplay,
+            sku: selectedVariant ? selectedVariant.sku : undefined,
+            variantId: selectedVariant ? selectedVariant.id : undefined,
+            attributes: selectedAttributes
+        };
+        addToCart({ 
+            product: cartProduct, 
+            size: selectedAttributes.size || selectedSize, 
+            quantity 
+        });
+        setIsCartOpen(true);
     };
 
     const imagesToRender = product.images || [product.image];
@@ -146,16 +191,47 @@ export default function ProductDetails() {
                     <ProductInfo 
                         name={product.name} 
                         category={product.category} 
-                        price={product.price} 
+                        price={priceToDisplay} 
                         originalPrice={product.originalPrice} 
                         description={product.description} 
                     />
 
-                    <SizeSelector 
-                        sizes={product.sizes} 
-                        selectedSize={selectedSize} 
-                        onSelectSize={setSelectedSize} 
-                    />
+                    {attributeKeys.length > 0 ? (
+                        <div className="flex flex-col gap-4 mb-6">
+                            {attributeKeys.map(key => (
+                                <div key={key} className="flex flex-col gap-2">
+                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                        Select {key}
+                                    </span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {attributeValues[key].map(val => {
+                                            const active = selectedAttributes[key] === val;
+                                            return (
+                                                <button
+                                                    key={val}
+                                                    type="button"
+                                                    onClick={() => setSelectedAttributes(prev => ({ ...prev, [key]: val }))}
+                                                    className={`px-4 py-2 text-xs font-bold rounded-xl border transition-all ${
+                                                        active 
+                                                            ? 'bg-blue-600 border-blue-600 text-white shadow-sm' 
+                                                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                                                    }`}
+                                                >
+                                                    {val}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <SizeSelector 
+                            sizes={product.sizes} 
+                            selectedSize={selectedSize} 
+                            onSelectSize={setSelectedSize} 
+                        />
+                    )}
 
                     {/* Quantity Selector */}
                     <div className="flex items-center gap-4 mb-6">
@@ -183,12 +259,12 @@ export default function ProductDetails() {
                     <div className="fixed bottom-[64px] left-0 right-0 p-4 bg-white/95 backdrop-blur-md border-t border-slate-100 md:static md:border-none md:p-0 md:bg-transparent z-40">
                         <button
                             onClick={handleAddToCartClick}
-                            disabled={isLoadingCart}
+                            disabled={isAddingToCart}
                             className={`w-full h-14 md:h-16 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base font-bold rounded-xl md:rounded-2xl transition-colors flex items-center justify-center shadow-lg shadow-blue-600/20 ${
-                                isLoadingCart ? 'opacity-70 cursor-not-allowed' : ''
+                                isAddingToCart ? 'opacity-70 cursor-not-allowed' : ''
                             }`}
                         >
-                            {isLoadingCart ? 'Adding to Cart...' : 'Add to Cart'}
+                            {isAddingToCart ? 'Adding to Cart...' : 'Add to Cart'}
                         </button>
                     </div>
                 </div>

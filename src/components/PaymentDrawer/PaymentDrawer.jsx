@@ -1,16 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import useStore from '../../store/useStore';
 import DebitCardForm from './DebitCardForm';
 import PaymentOptionSelector from './PaymentOptionSelector';
 
 export default function PaymentDrawer({ isOpen, onClose }) {
     const navigate = useNavigate();
-    const {
-        paymentMethod,
-        updatePaymentMethod
-    } = useEcommerce();
+    const paymentMethod = useStore((s) => s.paymentMethod);
+    const setPaymentMethod = useStore((s) => s.setPaymentMethod);
 
     const handleReviewDetails = () => {
         onClose();
@@ -60,7 +58,7 @@ export default function PaymentDrawer({ isOpen, onClose }) {
                     <div className="w-full md:w-1/2 flex flex-col gap-4">
                         <PaymentOptionSelector 
                             selectedOption={paymentMethod} 
-                            onSelectOption={updatePaymentMethod} 
+                            onSelectOption={setPaymentMethod} 
                         />
 
                         {/* Desktop Review Details Button (Inline) */}

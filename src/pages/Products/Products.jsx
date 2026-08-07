@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SlidersHorizontal } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import { useProducts } from '../../hooks/useProducts';
+import { useCategories } from '../../hooks/useCategories';
 import CategoryFilterTabs from './CategoryFilterTabs';
 import ProductGrid from './ProductGrid';
 
@@ -17,21 +18,34 @@ const SkeletonGrid = () => (
 );
 
 export default function Products() {
-    const { products, isLoadingProducts, errors } = useEcommerce();
+    const { data: products = [], isLoading: isLoadingProducts, error } = useProducts();
+    const { data: realCategories = [] } = useCategories();
     const [activeCategory, setActiveCategory] = useState('All');
 
-    const categories = ['All', 'Dresses', 'Shirts', 'Jeans', 'Blazers', 'Children Wear'];
+    const defaultCategories = ['All', 'Dresses', 'Shirts', 'Jeans', 'Blazers', 'Children Wear'];
+    const categories = realCategories.length > 0 
+        ? ['All', ...realCategories.map(c => c.name)]
+        : defaultCategories;
 
     // Dynamic filtering logic
-    const filteredProducts = products.filter(product => {
+    const productsArray = Array.isArray(products) ? products : [];
+    const filteredProducts = productsArray.filter(product => {
         if (activeCategory === 'All') return true;
+        
+        const productCategory = product.category?.toLowerCase() || '';
+        const selectedCat = activeCategory.toLowerCase();
+        
+        // Exact name or ID match
+        if (productCategory === selectedCat) return true;
+        
+        // Substring matches (e.g. Dresses vs Dress)
+        if (productCategory.includes(selectedCat) || selectedCat.includes(productCategory)) return true;
+        
+        // Substring match on product title (fallback for mock data)
         const name = product.name.toLowerCase();
-        if (activeCategory === 'Dresses') return name.includes('dress');
-        if (activeCategory === 'Shirts') return name.includes('shirt') || name.includes('blouse') || name.includes('tee');
-        if (activeCategory === 'Jeans') return name.includes('trouser') || name.includes('pants') || name.includes('jeans');
-        if (activeCategory === 'Blazers') return name.includes('blazer') || name.includes('jacket');
-        if (activeCategory === 'Children Wear') return product.category.toLowerCase() === 'children';
-        return true;
+        if (name.includes(selectedCat)) return true;
+        
+        return false;
     });
 
     return (
@@ -59,9 +73,9 @@ export default function Products() {
             {/* Product Grid or Skeleton or Error */}
             {isLoadingProducts ? (
                 <SkeletonGrid />
-            ) : errors.products ? (
+            ) : error ? (
                 <div className="text-center py-20 bg-red-50/50 rounded-2xl border border-red-100/50 max-w-md mx-auto">
-                    <p className="text-red-600 text-sm font-bold uppercase tracking-wider">{errors.products}</p>
+                    <p className="text-red-600 text-sm font-bold uppercase tracking-wider">{error.message}</p>
                 </div>
             ) : filteredProducts.length > 0 ? (
                 <ProductGrid products={filteredProducts} />

@@ -1,16 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Bell, Sliders, CheckCircle2 } from 'lucide-react';
-import { useEcommerce } from '../../context/EcommerceContext';
+import useStore from '../../store/useStore';
+import { useUpdateContactInfo } from '../../hooks/useSettings';
+import { useNotificationSettings, useUpdateNotificationSettings } from '../../hooks/useSettings';
 
 export default function Settings() {
     const navigate = useNavigate();
-    const { contactInfo, updateContactInfo, notificationSettings, updateNotificationSettings } = useEcommerce();
+    const user = useStore((s) => s.user);
+    const { mutate: updateContactInfo } = useUpdateContactInfo();
+    const { data: notificationSettings = {} } = useNotificationSettings();
+    const { mutate: updateNotificationSettings } = useUpdateNotificationSettings();
 
     // Form inputs state
-    const [name, setName] = useState(contactInfo.name);
-    const [email, setEmail] = useState(contactInfo.email);
-    const [phone, setPhone] = useState(contactInfo.phone);
+    const [name, setName] = useState(user?.name || '');
+    const [email, setEmail] = useState(user?.email || '');
+    const [phone, setPhone] = useState(user?.phone || '');
     const [isSaved, setIsSaved] = useState(false);
 
     // Mock Preferences state
