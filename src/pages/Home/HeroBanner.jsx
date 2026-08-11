@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SLIDES = [
     {
@@ -31,6 +32,7 @@ const SLIDES = [
 ];
 
 export default function HeroBanner() {
+    const navigate = useNavigate();
     const [current, setCurrent] = useState(0);
 
     // Auto-slide every 5 seconds
@@ -62,7 +64,7 @@ export default function HeroBanner() {
                     <p className={`${slide.subtitleColor} text-[11px] sm:text-sm md:text-base font-semibold tracking-wide`}>
                         {slide.subtitle}
                     </p>
-                    <button className="mt-1.5 md:mt-3 self-start bg-white hover:bg-slate-50 text-slate-900 text-[10px] sm:text-xs font-bold px-4 py-2 sm:px-6 sm:py-2.5 rounded-full transition-all shadow-sm hover:scale-105 active:scale-95 duration-200 border-none cursor-pointer">
+                    <button onClick={() => navigate('/products')} className="mt-1.5 md:mt-3 self-start bg-white hover:bg-slate-50 text-slate-900 text-[10px] sm:text-xs font-bold px-4 py-2 sm:px-6 sm:py-2.5 rounded-full transition-all shadow-sm hover:scale-105 active:scale-95 duration-200 border-none cursor-pointer">
                         {slide.cta}
                     </button>
                 </div>

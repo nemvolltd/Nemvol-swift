@@ -9,7 +9,7 @@ export default function HomeTopBar({ onFilterClick }) {
     const handleSearch = (e) => {
         e.preventDefault();
         if (query.trim()) {
-            navigate(`/shop?search=${encodeURIComponent(query.trim())}`);
+            navigate(`/products?search=${encodeURIComponent(query.trim())}`);
         }
     };
 
@@ -19,7 +19,7 @@ export default function HomeTopBar({ onFilterClick }) {
             <div className="flex items-center justify-between">
                 {/* Grid / Menu icon */}
                 <button
-                    onClick={() => navigate('/shop')}
+                    onClick={() => navigate('/products')}
                     className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 transition-colors border-none bg-transparent cursor-pointer"
                     aria-label="Browse categories"
                 >

@@ -1,65 +1,50 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../services/api/index';
 import useStore from '../store/useStore';
 
+// ── Local storage helpers ────────────────────────────────────────────────────
+const CART_KEY = 'guest-cart';
+
 const getLocalCart = () => {
-    try {
-        const cartData = localStorage.getItem('guest-cart');
-        return cartData ? JSON.parse(cartData) : [];
-    } catch (e) {
-        return [];
-    }
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+    catch { return []; }
 };
 
 const saveLocalCart = (cart) => {
-    try {
-        localStorage.setItem('guest-cart', JSON.stringify(cart));
-    } catch (e) {
-        // ignore
-    }
+    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+    catch { /* ignore */ }
 };
 
+// ── useCart ──────────────────────────────────────────────────────────────────
 /**
- * Fetch the user's cart
+ * Fetch the current cart from localStorage (works for both guests and logged-in users).
  */
 export function useCart() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     return useQuery({
         queryKey: ['cart'],
-        queryFn: async () => {
-            if (isLoggedIn) {
-                return api.getCart();
-            } else {
-                return getLocalCart();
-            }
-        },
-        enabled: true,
+        queryFn:  () => getLocalCart(),
+        enabled:  true,
     });
 }
 
+// ── useAddToCart ─────────────────────────────────────────────────────────────
 /**
- * Add item to cart
+ * Add a product (with size + quantity) to the cart.
  */
 export function useAddToCart() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ product, size, quantity }) => {
-            if (isLoggedIn) {
-                return api.addToCart(product, size, quantity);
+            const local = getLocalCart();
+            const existingIndex = local.findIndex(
+                (item) => item.product.id === product.id && item.size === size
+            );
+            if (existingIndex > -1) {
+                local[existingIndex].quantity += quantity;
             } else {
-                const local = getLocalCart();
-                const existingIndex = local.findIndex(
-                    item => item.product.id === product.id && item.size === size
-                );
-                if (existingIndex > -1) {
-                    local[existingIndex].quantity += quantity;
-                } else {
-                    local.push({ product, size, quantity, selected: true });
-                }
-                saveLocalCart(local);
-                return local;
+                local.push({ product, size, quantity, selected: true });
             }
+            saveLocalCart(local);
+            return local;
         },
         onSuccess: (updatedCart) => {
             queryClient.setQueryData(['cart'], updatedCart);
@@ -67,21 +52,19 @@ export function useAddToCart() {
     });
 }
 
+// ── useRemoveFromCart ────────────────────────────────────────────────────────
 /**
- * Remove item from cart
+ * Remove a specific product+size combination from the cart.
  */
 export function useRemoveFromCart() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ productId, size }) => {
-            if (isLoggedIn) {
-                return api.removeFromCart(productId, size);
-            } else {
-                const local = getLocalCart().filter(item => !(item.product.id === productId && item.size === size));
-                saveLocalCart(local);
-                return local;
-            }
+            const local = getLocalCart().filter(
+                (item) => !(item.product.id === productId && item.size === size)
+            );
+            saveLocalCart(local);
+            return local;
         },
         onSuccess: (updatedCart) => {
             queryClient.setQueryData(['cart'], updatedCart);
@@ -89,27 +72,22 @@ export function useRemoveFromCart() {
     });
 }
 
+// ── useUpdateCartQty ─────────────────────────────────────────────────────────
 /**
- * Update cart item quantity (optimistic)
+ * Increment or decrement a cart item's quantity (optimistic update).
  */
 export function useUpdateCartQty() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ productId, size, delta }) => {
-            if (isLoggedIn) {
-                return api.updateCartQuantity(productId, size, delta);
-            } else {
-                const local = getLocalCart().map(item => {
-                    if (item.product.id === productId && item.size === size) {
-                        const newQuantity = Math.max(1, item.quantity + delta);
-                        return { ...item, quantity: newQuantity };
-                    }
-                    return item;
-                });
-                saveLocalCart(local);
-                return local;
-            }
+            const local = getLocalCart().map((item) => {
+                if (item.product.id === productId && item.size === size) {
+                    return { ...item, quantity: Math.max(1, item.quantity + delta) };
+                }
+                return item;
+            });
+            saveLocalCart(local);
+            return local;
         },
         onMutate: async ({ productId, size, delta }) => {
             await queryClient.cancelQueries({ queryKey: ['cart'] });
@@ -133,26 +111,22 @@ export function useUpdateCartQty() {
     });
 }
 
+// ── useToggleCartSelect ───────────────────────────────────────────────────────
 /**
- * Toggle cart item selection (optimistic)
+ * Toggle the "selected" state of a single cart item (optimistic).
  */
 export function useToggleCartSelect() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async ({ productId, size }) => {
-            if (isLoggedIn) {
-                return api.toggleCartItemSelection(productId, size);
-            } else {
-                const local = getLocalCart().map(item => {
-                    if (item.product.id === productId && item.size === size) {
-                        return { ...item, selected: !item.selected };
-                    }
-                    return item;
-                });
-                saveLocalCart(local);
-                return local;
-            }
+            const local = getLocalCart().map((item) => {
+                if (item.product.id === productId && item.size === size) {
+                    return { ...item, selected: !item.selected };
+                }
+                return item;
+            });
+            saveLocalCart(local);
+            return local;
         },
         onMutate: async ({ productId, size }) => {
             await queryClient.cancelQueries({ queryKey: ['cart'] });
@@ -173,21 +147,17 @@ export function useToggleCartSelect() {
     });
 }
 
+// ── useToggleSelectAll ────────────────────────────────────────────────────────
 /**
- * Toggle select all cart items (optimistic)
+ * Select or deselect all cart items at once (optimistic).
  */
 export function useToggleSelectAll() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (selectAll) => {
-            if (isLoggedIn) {
-                return api.toggleSelectAll(selectAll);
-            } else {
-                const local = getLocalCart().map(item => ({ ...item, selected: selectAll }));
-                saveLocalCart(local);
-                return local;
-            }
+            const local = getLocalCart().map((item) => ({ ...item, selected: selectAll }));
+            saveLocalCart(local);
+            return local;
         },
         onMutate: async (selectAll) => {
             await queryClient.cancelQueries({ queryKey: ['cart'] });
@@ -203,21 +173,17 @@ export function useToggleSelectAll() {
     });
 }
 
+// ── useClearSelectedItems ─────────────────────────────────────────────────────
 /**
- * Clear selected cart items
+ * Remove all currently selected items from the cart.
  */
 export function useClearSelectedItems() {
-    const isLoggedIn = useStore((s) => s.isLoggedIn);
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async () => {
-            if (isLoggedIn) {
-                return api.clearSelectedCartItems();
-            } else {
-                const local = getLocalCart().filter(item => !item.selected);
-                saveLocalCart(local);
-                return local;
-            }
+            const local = getLocalCart().filter((item) => !item.selected);
+            saveLocalCart(local);
+            return local;
         },
         onSuccess: (remainingCart) => {
             queryClient.setQueryData(['cart'], remainingCart);

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../hooks/useProducts';
 import { useCategories } from '../../hooks/useCategories';
 import HeroBanner from './HeroBanner';
@@ -7,6 +8,7 @@ import ProductCard from './ProductCard';
 import HomeTopBar from './HomeTopBar';
 
 export default function Home() {
+    const navigate = useNavigate();
     const { data: products = [] } = useProducts();
     const { data: realCategories = [] } = useCategories();
     const [activeCategory, setActiveCategory] = useState('All');
@@ -48,7 +50,7 @@ export default function Home() {
             {/* Special For You */}
             <div className="mb-5 flex items-center justify-between">
                 <h3 className="text-[16px] font-bold text-slate-900">Special For You</h3>
-                <button className="text-xs text-slate-400 hover:text-orange-500 font-medium transition-colors">
+                <button onClick={() => navigate('/products')} className="text-xs text-slate-400 hover:text-orange-500 font-medium transition-colors">
                     See all
                 </button>
             </div>
