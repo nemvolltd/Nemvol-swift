@@ -27,7 +27,20 @@ export default function RecentTransactions({ orders = [] }) {
         }
     };
 
-    const displayOrders = orders.slice(0, 5);
+    const now = new Date();
+    const filteredByPeriod = orders.filter(order => {
+        if (filter === 'today') {
+            const d = new Date(order.createdAt || order.date);
+            return d.toDateString() === now.toDateString();
+        }
+        if (filter === 'weekly') {
+            const d = new Date(order.createdAt || order.date);
+            return !isNaN(d) && (now - d) / (1000 * 60 * 60 * 24) <= 7;
+        }
+        return true; // monthly = all
+    });
+    const displayOrders = filteredByPeriod.slice(0, 5);
+
 
     return (
         <div className="bg-white border border-slate-100 rounded-3xl p-5 md:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.01)] flex flex-col gap-6">

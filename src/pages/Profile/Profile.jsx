@@ -62,7 +62,7 @@ export default function Profile() {
                         {user?.name ? user.name.slice(0, 2) : 'AG'}
                     </div>
                     {/* Pencil edit icon floating bottom-right */}
-                    <button className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white shadow-md border border-slate-150 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer">
+                    <button onClick={() => navigate('/settings')} className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-white shadow-md border border-slate-150 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer">
                         <Edit2 className="w-3.5 h-3.5 text-slate-500" strokeWidth={2} />
                     </button>
                 </div>
@@ -76,7 +76,7 @@ export default function Profile() {
             {/* Core Info Card (Phone, Email, Address) */}
             <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden mb-8">
                 {/* Phone row */}
-                <div className="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors cursor-pointer border-b border-slate-50">
+                <div onClick={() => navigate('/settings')} className="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors cursor-pointer border-b border-slate-50">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500">
                             <Phone className="w-4 h-4" strokeWidth={2} />
@@ -90,7 +90,7 @@ export default function Profile() {
                 </div>
 
                 {/* Email row */}
-                <div className="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors cursor-pointer border-b border-slate-50">
+                <div onClick={() => navigate('/settings')} className="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors cursor-pointer border-b border-slate-50">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500">
                             <Mail className="w-4 h-4" strokeWidth={2} />
@@ -159,7 +159,7 @@ export default function Profile() {
                         <span className="text-[9px] text-slate-400">Saved Items</span>
                     </div>
 
-                    {/* Returns */}
+                    {/* Order History */}
                     <div 
                         onClick={() => navigate('/orders')}
                         className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.02)] p-4 flex flex-col items-center text-center cursor-pointer hover:shadow-md transition-shadow group"
@@ -167,8 +167,8 @@ export default function Profile() {
                         <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 mb-2.5">
                             <RotateCcw className="w-4 h-4" />
                         </div>
-                        <span className="text-[10px] font-bold text-slate-800 leading-tight mb-1">Returns</span>
-                        <span className="text-[9px] text-slate-400">0 Items</span>
+                        <span className="text-[10px] font-bold text-slate-800 leading-tight mb-1">History</span>
+                        <span className="text-[9px] text-slate-400">All Orders</span>
                     </div>
                 </div>
             </div>

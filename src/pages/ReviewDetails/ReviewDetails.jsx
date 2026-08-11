@@ -95,7 +95,7 @@ export default function ReviewDetails() {
                 </div>
 
                 <button
-                    onClick={() => navigate('/help')}
+                    onClick={() => window.open('mailto:support@nemvol.com', '_blank')}
                     className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer border-none"
                     aria-label="Support"
                 >

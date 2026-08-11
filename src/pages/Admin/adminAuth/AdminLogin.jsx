@@ -24,11 +24,20 @@ export default function AdminLogin() {
         e.preventDefault();
         setErrorMsg('');
 
-        const trimmedEmail = email.trim();
+        const trimmedEmail    = email.trim();
         const trimmedPassword = password.trim();
 
         if (!trimmedEmail || !trimmedPassword) {
             setErrorMsg('Please enter your email address and password.');
+            return;
+        }
+
+        // Admin credential check — change these or move to env vars for production
+        const ADMIN_EMAIL    = 'admin@nemvol.com';
+        const ADMIN_PASSWORD = 'admin123';
+
+        if (trimmedEmail !== ADMIN_EMAIL || trimmedPassword !== ADMIN_PASSWORD) {
+            setErrorMsg('Invalid admin credentials. Please check your email and password.');
             return;
         }
 
@@ -238,7 +247,7 @@ export default function AdminLogin() {
                                     <label className="text-[11px] font-extrabold text-slate-800">Password</label>
                                     <button
                                         type="button"
-                                        onClick={() => setErrorMsg('Reset instructions sent to email.')}
+                                        onClick={() => window.open('mailto:admin-support@nemvol.com', '_blank')}
                                         className="text-[10.5px] text-blue-600 font-bold hover:underline border-none bg-transparent cursor-pointer p-0"
                                     >
                                         Forgot Password?

@@ -1,52 +1,87 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '../services/api/index';
 import useStore from '../store/useStore';
 
+// ── Local storage helpers ────────────────────────────────────────────────────
+const CARDS_KEY = 'local-payment-cards';
+
+const getLocalCards = () => {
+    try { return JSON.parse(localStorage.getItem(CARDS_KEY)) || []; }
+    catch { return []; }
+};
+
+const saveLocalCards = (cards) => {
+    try { localStorage.setItem(CARDS_KEY, JSON.stringify(cards)); }
+    catch { /* ignore */ }
+};
+
+// ── usePaymentCards ───────────────────────────────────────────────────────────
 /**
- * Fetch all saved payment cards
+ * Fetch all saved payment cards from localStorage (requires login).
  */
 export function usePaymentCards() {
     const isLoggedIn = useStore((s) => s.isLoggedIn);
     return useQuery({
         queryKey: ['cards'],
-        queryFn: api.getCards,
-        enabled: isLoggedIn,
+        queryFn:  () => getLocalCards(),
+        enabled:  isLoggedIn,
     });
 }
 
+// ── useAddCard ────────────────────────────────────────────────────────────────
 /**
- * Add a new payment card
+ * Save a new payment card locally.
  */
 export function useAddCard() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (cardData) => api.addCard(cardData),
+        mutationFn: async (cardData) => {
+            const current = getLocalCards();
+            const newCard = { ...cardData, id: Date.now() };
+            // First card becomes the default
+            if (current.length === 0) newCard.isDefault = true;
+            const updated = [...current, newCard];
+            saveLocalCards(updated);
+            return updated;
+        },
         onSuccess: (updatedCards) => {
             queryClient.setQueryData(['cards'], updatedCards);
         },
     });
 }
 
+// ── useDeleteCard ─────────────────────────────────────────────────────────────
 /**
- * Delete a payment card
+ * Remove a payment card from localStorage.
  */
 export function useDeleteCard() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (cardId) => api.deleteCard(cardId),
+        mutationFn: async (cardId) => {
+            const updated = getLocalCards().filter((c) => c.id !== cardId);
+            saveLocalCards(updated);
+            return updated;
+        },
         onSuccess: (updatedCards) => {
             queryClient.setQueryData(['cards'], updatedCards);
         },
     });
 }
 
+// ── useSetDefaultCard ─────────────────────────────────────────────────────────
 /**
- * Set a card as default (optimistic)
+ * Mark a card as the default (optimistic update).
  */
 export function useSetDefaultCard() {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (cardId) => api.setDefaultCard(cardId),
+        mutationFn: async (cardId) => {
+            const updated = getLocalCards().map((c) => ({
+                ...c,
+                isDefault: c.id === cardId,
+            }));
+            saveLocalCards(updated);
+            return updated;
+        },
         onMutate: async (cardId) => {
             await queryClient.cancelQueries({ queryKey: ['cards'] });
             const previous = queryClient.getQueryData(['cards']);
@@ -57,6 +92,9 @@ export function useSetDefaultCard() {
         },
         onError: (_err, _vars, context) => {
             queryClient.setQueryData(['cards'], context?.previous);
+        },
+        onSuccess: (updatedCards) => {
+            queryClient.setQueryData(['cards'], updatedCards);
         },
     });
 }

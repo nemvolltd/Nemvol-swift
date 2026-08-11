@@ -6,28 +6,30 @@ import {
     ShoppingCart,
     Users,
     Plus,
+    FolderTree,
 } from 'lucide-react';
 import ProductModal from '../modal/ProductModal';
-import mockDb from '../mockDb';
+import { useCreateProduct } from '../../../hooks/useProducts';
 
 const LEFT_ITEMS = [
-    { path: '/admin/overview',   label: 'Overview',   icon: LayoutDashboard },
-    { path: '/admin/products',   label: 'Products',   icon: Package },
+    { path: '/admin/overview',    label: 'Overview',    icon: LayoutDashboard },
+    { path: '/admin/products',    label: 'Products',    icon: Package },
 ];
 const RIGHT_ITEMS = [
-    { path: '/admin/orders',     label: 'Orders',     icon: ShoppingCart },
-    { path: '/admin/users',      label: 'Customers',  icon: Users },
+    { path: '/admin/orders',      label: 'Orders',      icon: ShoppingCart },
+    { path: '/admin/users',       label: 'Customers',   icon: Users },
 ];
 
 export default function AdminMobileNav({ isVisible = true }) {
     const navigate  = useNavigate();
     const location  = useLocation();
     const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+    const { mutate: createProduct } = useCreateProduct();
 
     const isActive = (path) => location.pathname === path;
 
     const handleProductSubmit = (formData) => {
-        mockDb.addProduct(formData);
+        createProduct(formData);
         setIsProductModalOpen(false);
     };
 
